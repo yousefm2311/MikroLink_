@@ -15,6 +15,10 @@ import statusRoutes from "./routes/status.js";
 import supportRoutes from "./routes/support.js";
 import tripRoutes from "./routes/trip.js";
 import vehicleRoutes from "./routes/vehicle.js";
+import locationRoutes from "./routes/location.js";
+import summaryRoutes from "./routes/summary.js";
+import fuelRoutes from "./routes/fuel.js";
+
 
 
 
@@ -55,6 +59,11 @@ app.use("/api/settings", settingsRoutes);
 app.use("/api/status", statusRoutes);
 // 🖼️ عرض الملفات داخل مجلد uploads مباشرة من المتصفح
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+app.use("/api/location", locationRoutes);
+app.use("/api/summary", summaryRoutes);
+app.use("/api/fuel", fuelRoutes);
+
 
 
 
