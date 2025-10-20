@@ -62,3 +62,5 @@ router.post("/:id/cancel", protect, async (req, res) => {
 });
 
 export default router;
+//   git config --global user.email "yousefmohamed17479191@gmail.com"
+//   git config --global user.name "Yousef Mohamed"
