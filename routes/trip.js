@@ -61,4 +61,13 @@ router.post("/:id/cancel", protect, async (req, res) => {
   res.json({ message: "تم إلغاء الرحلة", trip });
 });
 
+
+// 🔹 الرحلات المكتملة فقط (تاريخ)
+router.get("/history", protect, async (req, res) => {
+  const trips = await Trip.find({ driverId: req.driver._id, status: "completed" })
+    .sort({ completedAt: -1 });
+  res.json(trips);
+});
+
+
 export default router;

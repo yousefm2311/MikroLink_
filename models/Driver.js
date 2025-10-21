@@ -14,7 +14,12 @@ const driverSchema = new mongoose.Schema({
     carPhoto: String,
     profilePhoto: String,
   },
-  isOnline: { type: Boolean, default: false }
+  isVerified: { type: Boolean, default: false },
+  verificationCode: String,
+  isOnline: { type: Boolean, default: false },
+  refreshToken: { type: String, default: null },
+  resetCode: { type: String, default: null },
+  resetCodeExpires: { type: Date, default: null },
 });
 
 export default mongoose.model("Driver", driverSchema);

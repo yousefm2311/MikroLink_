@@ -25,4 +25,20 @@ router.get("/", protect, async (req, res) => {
   res.json(fuelLogs);
 });
 
+
+// 🔹 ملخص استهلاك البنزين
+router.get("/summary", protect, async (req, res) => {
+  const logs = await Fuel.find({ driverId: req.driver._id });
+  const totalLiters = logs.reduce((s, r) => s + (r.liters || 0), 0);
+  const totalCost = logs.reduce((s, r) => s + (r.cost || 0), 0);
+  const averagePrice = totalLiters ? +(totalCost / totalLiters).toFixed(2) : 0;
+  res.json({
+    totalLiters,
+    totalCost,
+    averagePrice,
+    recordsCount: logs.length
+  });
+});
+
+
 export default router;

@@ -1,6 +1,6 @@
 import express from "express";
-import Maintenance from "../models/Maintenance.js";
 import { protect } from "../Middleware/auth.js";
+import Maintenance from "../models/Maintenance.js";
 
 const router = express.Router();
 
