@@ -1,6 +1,6 @@
 import cron from "node-cron";
-import Vehicle from "../models/Vehicle.js";
-import Reminder from "../models/Reminder.js";
+import Vehicle from "../models/vehicle.model.js";
+import Reminder from "../models/reminder.model.js";
 
 // Job: create oil change reminders daily at 9:00
 cron.schedule("0 9 * * *", async () => {

@@ -1,7 +1,7 @@
 import express from "express";
-import Rating from "../models/Rating.js";
+import Rating from "../models/rating.model.js";
 import { protect } from "../Middleware/auth.js";
-import { ok } from "../utils/ApiResponse.js";
+import { ok } from "../utils/api-response.js";
 import { MESSAGES } from "../utils/messages.js";
 
 const router = express.Router();
@@ -19,4 +19,3 @@ router.get("/", protect, async (req, res, next) => {
 });
 
 export default router;
-

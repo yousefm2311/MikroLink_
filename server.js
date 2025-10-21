@@ -24,7 +24,7 @@ import vehicleRoutes from "./routes/vehicle.js";
 import fuelRoutes from "./routes/fuel.js";
 import path from "path";
 import { fileURLToPath } from "url";
-import { notFound, errorHandler } from "./Middleware/error.js";
+import { notFound, errorHandler } from "./Middleware/errorHandler.js";
 
 dotenv.config();
 connectDB();
@@ -78,8 +78,8 @@ app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 
 // 10-minute inactivity job (kept as-is)
 import cron from "node-cron";
-import Driver from "./models/Driver.js";
-import DriverLocation from "./models/DriverLocation.js";
+import Driver from "./models/driver.model.js";
+import DriverLocation from "./models/driver-location.model.js";
 
 cron.schedule("*/10 * * * *", async () => {
   try {

@@ -14,3 +14,4 @@ const fuelSchema = new mongoose.Schema({
 });
 
 export default mongoose.model("Fuel", fuelSchema);
+

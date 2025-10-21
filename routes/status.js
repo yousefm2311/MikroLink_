@@ -1,7 +1,7 @@
 import express from "express";
-import Driver from "../models/Driver.js";
+import Driver from "../models/driver.model.js";
 import { protect } from "../Middleware/auth.js";
-import { ok } from "../utils/ApiResponse.js";
+import { ok } from "../utils/api-response.js";
 import { MESSAGES } from "../utils/messages.js";
 
 const router = express.Router();
@@ -19,4 +19,3 @@ router.put("/toggle", protect, async (req, res, next) => {
 });
 
 export default router;
-

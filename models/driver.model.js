@@ -23,3 +23,4 @@ const driverSchema = new mongoose.Schema({
 });
 
 export default mongoose.model("Driver", driverSchema);
+

@@ -1,9 +1,9 @@
 import express from "express";
-import Trip from "../models/Trip.js";
-import Rating from "../models/Rating.js";
+import Trip from "../models/trip.model.js";
+import Rating from "../models/rating.model.js";
 import { protect } from "../Middleware/auth.js";
-import Fuel from "../models/Fuel.js";
-import { ok } from "../utils/ApiResponse.js";
+import Fuel from "../models/fuel.model.js";
+import { ok } from "../utils/api-response.js";
 import { MESSAGES } from "../utils/messages.js";
 
 const router = express.Router();
@@ -71,4 +71,3 @@ router.get("/weekly", protect, async (req, res, next) => {
 });
 
 export default router;
-

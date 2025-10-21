@@ -13,3 +13,4 @@ const tripLocationSchema = new mongoose.Schema({
 });
 
 export default mongoose.model("TripLocation", tripLocationSchema);
+

@@ -1,11 +1,11 @@
 import express from "express";
 import multer from "multer";
-import Driver from "../models/Driver.js";
+import Driver from "../models/driver.model.js";
 import { protect } from "../Middleware/auth.js";
 import { validationResult } from "express-validator";
-import { ApiError } from "../Middleware/error.js";
+import ApiError from "../utils/ApiError.js";
 import { MESSAGES } from "../utils/messages.js";
-import { ok } from "../utils/ApiResponse.js";
+import { ok } from "../utils/api-response.js";
 
 const router = express.Router();
 
@@ -77,4 +77,3 @@ router.post(
 );
 
 export default router;
-

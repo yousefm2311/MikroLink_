@@ -13,3 +13,4 @@ const reminderSchema = new mongoose.Schema({
 });
 
 export default mongoose.model("Reminder", reminderSchema);
+

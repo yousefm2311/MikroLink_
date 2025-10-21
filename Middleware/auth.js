@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
-import Driver from "../models/Driver.js";
-import { ApiError } from "./error.js";
+import Driver from "../models/driver.model.js";
+import ApiError from "../utils/ApiError.js";
 
 export const protect = async (req, res, next) => {
   try {

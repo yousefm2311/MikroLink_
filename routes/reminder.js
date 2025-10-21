@@ -1,10 +1,10 @@
 import express from "express";
-import Reminder from "../models/Reminder.js";
+import Reminder from "../models/reminder.model.js";
 import { protect } from "../Middleware/auth.js";
 import { reminderCreateValidator } from "../Middleware/validators.js";
 import { validationResult } from "express-validator";
-import { ApiError } from "../Middleware/error.js";
-import { ok, created } from "../utils/ApiResponse.js";
+import ApiError from "../utils/ApiError.js";
+import { ok, created } from "../utils/api-response.js";
 import { MESSAGES } from "../utils/messages.js";
 
 const router = express.Router();
@@ -48,4 +48,3 @@ router.put("/:id/read", protect, async (req, res, next) => {
 });
 
 export default router;
-

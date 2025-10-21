@@ -6,7 +6,7 @@ const maintenanceSchema = new mongoose.Schema({
     ref: "Driver",
     required: true,
   },
-  type: { type: String, required: true }, // زيت، كاوتش، فرامل
+  type: { type: String, required: true },
   date: { type: Date, required: true },
   odometer: { type: Number },
   cost: { type: Number },
@@ -14,3 +14,4 @@ const maintenanceSchema = new mongoose.Schema({
 });
 
 export default mongoose.model("Maintenance", maintenanceSchema);
+

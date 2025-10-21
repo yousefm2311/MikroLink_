@@ -106,3 +106,4 @@ export const tripStartValidator = [
   body("fare").optional().isFloat({ min: 0 }),
   body("distance").optional().isFloat({ min: 0 }),
 ];
+

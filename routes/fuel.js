@@ -1,10 +1,10 @@
 import express from "express";
-import Fuel from "../models/Fuel.js";
+import Fuel from "../models/fuel.model.js";
 import { protect } from "../Middleware/auth.js";
 import { fuelCreateValidator } from "../Middleware/validators.js";
 import { validationResult } from "express-validator";
-import { ApiError } from "../Middleware/error.js";
-import { ok, created } from "../utils/ApiResponse.js";
+import ApiError from "../utils/ApiError.js";
+import { ok, created } from "../utils/api-response.js";
 import { MESSAGES } from "../utils/messages.js";
 
 const router = express.Router();
@@ -54,4 +54,3 @@ router.get("/summary", protect, async (req, res, next) => {
 });
 
 export default router;
-

@@ -1,11 +1,11 @@
 import express from "express";
-import Vehicle from "../models/Vehicle.js";
+import Vehicle from "../models/vehicle.model.js";
 import { protect } from "../Middleware/auth.js";
 import { vehicleUpsertValidator } from "../Middleware/validators.js";
 import { validationResult } from "express-validator";
-import { ApiError } from "../Middleware/error.js";
+import ApiError from "../utils/ApiError.js";
 import { MESSAGES } from "../utils/messages.js";
-import { ok } from "../utils/ApiResponse.js";
+import { ok } from "../utils/api-response.js";
 
 const router = express.Router();
 
@@ -52,4 +52,3 @@ router.post("/", protect, vehicleUpsertValidator, async (req, res, next) => {
 });
 
 export default router;
-

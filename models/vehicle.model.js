@@ -8,10 +8,11 @@ const vehicleSchema = new mongoose.Schema({
   },
   plateNumber: { type: String, required: true },
   model: String,
-  fuelLevel: Number, // نسبة الوقود %
-  odometer: Number, // العداد الحالي
-  nextOilChange: Number, // الكيلومتر القادم لتغيير الزيت
+  fuelLevel: Number,
+  odometer: Number,
+  nextOilChange: Number,
   lastOilChangeDate: Date,
 });
 
 export default mongoose.model("Vehicle", vehicleSchema);
+

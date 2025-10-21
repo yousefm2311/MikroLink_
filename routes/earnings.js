@@ -1,7 +1,7 @@
 import express from "express";
-import Trip from "../models/Trip.js";
+import Trip from "../models/trip.model.js";
 import { protect } from "../Middleware/auth.js";
-import { ok } from "../utils/ApiResponse.js";
+import { ok } from "../utils/api-response.js";
 import { MESSAGES } from "../utils/messages.js";
 
 const router = express.Router();

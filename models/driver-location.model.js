@@ -13,3 +13,4 @@ const driverLocationSchema = new mongoose.Schema({
 });
 
 export default mongoose.model("DriverLocation", driverLocationSchema);
+

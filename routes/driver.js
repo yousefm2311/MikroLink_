@@ -3,9 +3,9 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
 
-import Driver from "../models/Driver.js";
+import Driver from "../models/driver.model.js";
 import { protect } from "../Middleware/auth.js";
-import { ApiError } from "../Middleware/error.js";
+import ApiError from "../utils/ApiError.js";
 import {
   signupValidator,
   loginValidator,
@@ -16,8 +16,8 @@ import {
   changePasswordValidator,
 } from "../Middleware/validators.js";
 import { MESSAGES } from "../utils/messages.js";
-import { ok, created } from "../utils/ApiResponse.js";
-import { sendEmail } from "../utils/sendEmail.js";
+import { ok, created } from "../utils/api-response.js";
+import { sendEmail } from "../utils/send-email.js";
 
 const router = express.Router();
 
@@ -267,4 +267,3 @@ router.post("/logout", async (req, res, next) => {
 });
 
 export default router;
-
