@@ -1,18 +1,21 @@
 import jwt from "jsonwebtoken";
 import Driver from "../models/Driver.js";
+import { ApiError } from "./error.js";
 
 export const protect = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "مطلوب تسجيل الدخول" });
+      throw new ApiError(401, 'غير مصرح. يرجى تسجيل الدخول.');
     }
 
     const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.driver = await Driver.findById(decoded.id).select("-password");
+    if (!req.driver) throw new ApiError(401, 'جلسة غير صالحة');
     next();
   } catch (err) {
-    res.status(401).json({ message: "توكن غير صالح أو منتهي" });
+    return next(err);
   }
 };
+

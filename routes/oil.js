@@ -1,40 +1,42 @@
 import express from "express";
 import Vehicle from "../models/Vehicle.js";
 import { protect } from "../Middleware/auth.js";
+import { oilUpdateValidator } from "../Middleware/validators.js";
+import { validationResult } from "express-validator";
+import { ApiError } from "../Middleware/error.js";
+import { ok } from "../utils/ApiResponse.js";
+import { MESSAGES } from "../utils/messages.js";
 
 const router = express.Router();
 
-// 🔹 تحديث آخر تغيير زيت
-router.post("/update", protect, async (req, res) => {
+router.post("/update", protect, oilUpdateValidator, async (req, res, next) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) throw new ApiError(400, MESSAGES.system.bad_request, errors.array());
     const { odometer, nextOilChange } = req.body;
     const vehicle = await Vehicle.findOne({ driverId: req.driver._id });
-    if (!vehicle)
-      return res.status(404).json({ message: "لم يتم العثور على السيارة" });
+    if (!vehicle) throw new ApiError(404, MESSAGES.oil.vehicle_missing);
 
     vehicle.lastOilChangeDate = new Date();
     vehicle.odometer = odometer;
     vehicle.nextOilChange = nextOilChange;
     await vehicle.save();
 
-    res.json({ message: "تم تحديث بيانات الزيت بنجاح", vehicle });
+    return ok(res, MESSAGES.oil.updated, vehicle);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return next(err);
   }
 });
 
-// 🔹 عرض حالة الزيت
-router.get("/", protect, async (req, res) => {
+router.get("/", protect, async (req, res, next) => {
   try {
     const vehicle = await Vehicle.findOne({ driverId: req.driver._id });
-    if (!vehicle)
-      return res.status(404).json({ message: "لم يتم العثور على السيارة" });
+    if (!vehicle) throw new ApiError(404, MESSAGES.oil.vehicle_missing);
 
-    const distanceSinceChange =
-      vehicle.odometer - (vehicle.nextOilChange - 5000);
+    const distanceSinceChange = vehicle.odometer - (vehicle.nextOilChange - 5000);
     const remaining = vehicle.nextOilChange - vehicle.odometer;
 
-    res.json({
+    return ok(res, MESSAGES.oil.fetched, {
       lastOilChangeDate: vehicle.lastOilChangeDate,
       odometer: vehicle.odometer,
       nextOilChange: vehicle.nextOilChange,
@@ -42,8 +44,9 @@ router.get("/", protect, async (req, res) => {
       remaining,
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return next(err);
   }
 });
 
 export default router;
+

@@ -1,39 +1,41 @@
 import express from "express";
 import Vehicle from "../models/Vehicle.js";
 import { protect } from "../Middleware/auth.js";
+import { vehicleUpsertValidator } from "../Middleware/validators.js";
+import { validationResult } from "express-validator";
+import { ApiError } from "../Middleware/error.js";
+import { MESSAGES } from "../utils/messages.js";
+import { ok } from "../utils/ApiResponse.js";
 
 const router = express.Router();
 
-// 🔹 الحصول على بيانات السيارة
-router.get("/", protect, async (req, res) => {
+router.get("/", protect, async (req, res, next) => {
   try {
     const vehicle = await Vehicle.findOne({ driverId: req.driver._id });
-    if (!vehicle)
-      return res.status(404).json({ message: "لم يتم تسجيل سيارة بعد" });
-    res.json(vehicle);
+    if (!vehicle) throw new ApiError(404, MESSAGES.vehicle.not_found);
+    return ok(res, MESSAGES.system.ok, vehicle);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return next(err);
   }
 });
 
-// 🔹 إنشاء أو تحديث بيانات السيارة
-router.post("/", protect, async (req, res) => {
+router.post("/", protect, vehicleUpsertValidator, async (req, res, next) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) throw new ApiError(400, MESSAGES.system.bad_request, errors.array());
     const { plateNumber, model, fuelLevel, odometer, nextOilChange } = req.body;
 
     let vehicle = await Vehicle.findOne({ driverId: req.driver._id });
     if (vehicle) {
-      // تحديث
       vehicle.plateNumber = plateNumber || vehicle.plateNumber;
       vehicle.model = model || vehicle.model;
       vehicle.fuelLevel = fuelLevel || vehicle.fuelLevel;
       vehicle.odometer = odometer || vehicle.odometer;
       vehicle.nextOilChange = nextOilChange || vehicle.nextOilChange;
       await vehicle.save();
-      return res.json({ message: "تم تحديث بيانات السيارة", vehicle });
+      return ok(res, MESSAGES.vehicle.upserted, vehicle);
     }
 
-    // إنشاء جديدة
     vehicle = await Vehicle.create({
       driverId: req.driver._id,
       plateNumber,
@@ -43,10 +45,11 @@ router.post("/", protect, async (req, res) => {
       nextOilChange,
     });
 
-    res.status(201).json({ message: "تم إضافة السيارة بنجاح", vehicle });
+    return ok(res, MESSAGES.vehicle.upserted, vehicle);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return next(err);
   }
 });
 
 export default router;
+

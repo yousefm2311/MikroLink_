@@ -1,12 +1,18 @@
 import express from "express";
 import { protect } from "../Middleware/auth.js";
 import Maintenance from "../models/Maintenance.js";
+import { maintenanceCreateValidator } from "../Middleware/validators.js";
+import { validationResult } from "express-validator";
+import { ApiError } from "../Middleware/error.js";
+import { ok, created } from "../utils/ApiResponse.js";
+import { MESSAGES } from "../utils/messages.js";
 
 const router = express.Router();
 
-// 🟢 إضافة صيانة جديدة
-router.post("/", protect, async (req, res) => {
+router.post("/", protect, maintenanceCreateValidator, async (req, res, next) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) throw new ApiError(400, MESSAGES.system.bad_request, errors.array());
     const { type, date, odometer, cost, notes } = req.body;
     const record = await Maintenance.create({
       driverId: req.driver._id,
@@ -16,22 +22,20 @@ router.post("/", protect, async (req, res) => {
       cost,
       notes,
     });
-    res.status(201).json({ message: "تم حفظ الصيانة بنجاح", record });
+    return created(res, MESSAGES.maintenance.created, record);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return next(err);
   }
 });
 
-// 🔵 عرض سجل الصيانة
-router.get("/", protect, async (req, res) => {
+router.get("/", protect, async (req, res, next) => {
   try {
-    const history = await Maintenance.find({ driverId: req.driver._id }).sort({
-      date: -1,
-    });
-    res.json(history);
+    const history = await Maintenance.find({ driverId: req.driver._id }).sort({ date: -1 });
+    return ok(res, MESSAGES.maintenance.list, history);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return next(err);
   }
 });
 
 export default router;
+

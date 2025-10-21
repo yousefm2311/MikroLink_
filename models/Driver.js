@@ -14,7 +14,7 @@ const driverSchema = new mongoose.Schema({
     carPhoto: String,
     profilePhoto: String,
   },
-  isVerified: { type: Boolean, default: false },
+  // unified verification flag -> use `verified` only
   verificationCode: String,
   isOnline: { type: Boolean, default: false },
   refreshToken: { type: String, default: null },

@@ -1,83 +1,60 @@
 import express from "express";
-import { protect } from "../Middleware/auth.js"; // ✅ تأكد أن اسم الفولدر small letters
+import { protect } from "../Middleware/auth.js";
 import Driver from "../models/Driver.js";
 import DriverLocation from "../models/DriverLocation.js";
 import TripLocation from "../models/TripLocation.js";
-
+import { validationResult } from "express-validator";
+import { liveLocationValidator, tripLocationCreateValidator } from "../Middleware/validators.js";
+import { ok } from "../utils/ApiResponse.js";
+import { ApiError } from "../Middleware/error.js";
+import { MESSAGES } from "../utils/messages.js";
 
 const router = express.Router();
 
-/* ============================================================
-   🟢 1) تحديث الموقع اللحظي (Live Location)
-   ============================================================ */
-router.post("/live", protect, async (req, res) => {
+router.post("/live", protect, liveLocationValidator, async (req, res, next) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) throw new ApiError(400, MESSAGES.system.bad_request, errors.array());
     const { latitude, longitude } = req.body;
-
-    if (typeof latitude !== "number" || typeof longitude !== "number") {
-      return res
-        .status(400)
-        .json({ message: "latitude و longitude لازم يكونوا أرقام" });
-    }
-
     const loc = await DriverLocation.findOneAndUpdate(
       { driverId: req.driver._id },
       { latitude, longitude, updatedAt: new Date() },
       { new: true, upsert: true }
     );
     await Driver.findByIdAndUpdate(req.driver._id, { isOnline: true });
-    res.json({ message: "✅ تم تحديث الموقع بنجاح", location: loc });
+    return ok(res, MESSAGES.location.live_updated, { location: loc });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "حدث خطأ أثناء تحديث الموقع" });
+    return next(err);
   }
 });
 
-/* ============================================================
-   🔵 2) جلب الموقع اللحظي الحالي للسائق
-   ============================================================ */
-router.get("/live", protect, async (req, res) => {
+router.get("/live", protect, async (req, res, next) => {
   try {
     const loc = await DriverLocation.findOne({ driverId: req.driver._id });
-    if (!loc) return res.json({ message: "لا يوجد موقع محفوظ بعد" });
-    res.json(loc);
+    if (!loc) return ok(res, MESSAGES.location.live_not_found, null);
+    return ok(res, MESSAGES.location.live_updated, loc);
   } catch (err) {
-    res.status(500).json({ message: "حدث خطأ أثناء جلب الموقع" });
+    return next(err);
   }
 });
 
-/* ============================================================
-   🟣 3) عرض كل السائقين الأونلاين (للمستخدمين)
-   ============================================================ */
-// 🔹 عرض كل السائقين الأونلاين
-// 🔹 عرض كل السائقين الأونلاين مع حساب المسافة من المستخدم
-// 🔹 عرض كل السائقين الأونلاين مع حساب المسافة والوقت التقريبي (ETA)
-// 🔹 عرض السائقين الأونلاين مع ترتيبهم حسب القرب ونوع المركبة
-router.get("/available", async (req, res) => {
+router.get("/available", async (req, res, next) => {
   try {
-    // 📍 موقع المستخدم (من الرابط)
-    const userLat = parseFloat(req.query.latitude);
-    const userLon = parseFloat(req.query.longitude);
-    const filterVehicle = req.query.vehicleType; // 🚗 نوع العربية (اختياري)
-
-    if (!userLat || !userLon) {
-      return res.status(400).json({
-        message: "يجب إرسال latitude و longitude في الرابط",
-      });
+    const userLat = Number(req.query.latitude);
+    const userLon = Number(req.query.longitude);
+    const filterVehicle = req.query.vehicleType;
+    if (!Number.isFinite(userLat) || !Number.isFinite(userLon)) {
+      throw new ApiError(400, MESSAGES.system.bad_request);
     }
 
-    // 🧩 نجلب كل السائقين الأونلاين فقط
     const drivers = await DriverLocation.find()
       .populate("driverId", "fullName phone vehicleType isOnline")
       .sort({ updatedAt: -1 });
 
-    const onlineDrivers = drivers.filter(
-      (d) => d.driverId?.isOnline === true
-    );
+    const onlineDrivers = drivers.filter((d) => d.driverId?.isOnline === true);
 
-    // 🧮 دالة حساب المسافة (Haversine Formula)
     const calcDistance = (lat1, lon1, lat2, lon2) => {
-      const R = 6371; // كم
+      const R = 6371;
       const dLat = (lat2 - lat1) * (Math.PI / 180);
       const dLon = (lon2 - lon1) * (Math.PI / 180);
       const a =
@@ -90,14 +67,11 @@ router.get("/available", async (req, res) => {
       return R * c;
     };
 
-    const averageSpeed = 35; // كم/س — سرعة متوسطة داخل المدينة
-
-    // 📏 حساب المسافة و ETA لكل سائق
+    const averageSpeed = 35;
     let driversWithDistance = onlineDrivers.map((d) => {
       const distanceKm = calcDistance(userLat, userLon, d.latitude, d.longitude);
       const timeHours = distanceKm / averageSpeed;
       const etaMinutes = Math.ceil(timeHours * 60);
-
       return {
         driverId: d.driverId._id,
         name: d.driverId.fullName,
@@ -111,70 +85,49 @@ router.get("/available", async (req, res) => {
       };
     });
 
-    // 🚗 لو المستخدم بعت vehicleType نفلتر عليه
     if (filterVehicle) {
       driversWithDistance = driversWithDistance.filter(
         (d) => d.vehicleType?.toLowerCase() === filterVehicle.toLowerCase()
       );
     }
 
-    // 🔢 نرتب حسب الأقرب
     driversWithDistance.sort((a, b) => a.distanceKm - b.distanceKm);
 
-    res.json({
+    return ok(res, MESSAGES.location.available_result, {
       userLocation: { latitude: userLat, longitude: userLon },
-      vehicleFilter: filterVehicle || "الكل",
+      vehicleFilter: filterVehicle || null,
       count: driversWithDistance.length,
       drivers: driversWithDistance,
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return next(err);
   }
 });
 
-
-
-
-
-/* ============================================================
-   🟤 4) حفظ نقطة موقع جديدة (أثناء الرحلة)
-   ============================================================ */
-router.post("/", protect, async (req, res) => {
+router.post("/", protect, tripLocationCreateValidator, async (req, res, next) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) throw new ApiError(400, MESSAGES.system.bad_request, errors.array());
     const { tripId, latitude, longitude } = req.body;
-    if (!tripId || !latitude || !longitude) {
-      return res
-        .status(400)
-        .json({ message: "يجب إرسال tripId و latitude و longitude" });
-    }
-
-    const loc = await TripLocation.create({
-      tripId,
-      driverId: req.driver._id,
-      latitude,
-      longitude,
-    });
-
-    res.json({ message: "✅ تم حفظ نقطة الموقع بنجاح", loc });
+    const loc = await TripLocation.create({ tripId, driverId: req.driver._id, latitude, longitude });
+    return ok(res, MESSAGES.location.trip_loc_created, loc);
   } catch (err) {
-    res.status(500).json({ message: "حدث خطأ أثناء حفظ الموقع" });
+    return next(err);
   }
 });
 
-/* ============================================================
-   ⚫ 5) عرض كل النقاط الخاصة برحلة معينة
-   ============================================================ */
-router.get("/:tripId", protect, async (req, res) => {
+router.get("/:tripId", protect, async (req, res, next) => {
   try {
     const locations = await TripLocation.find({ tripId: req.params.tripId });
-    res.json({
+    return ok(res, MESSAGES.location.trip_locations, {
       tripId: req.params.tripId,
       count: locations.length,
       locations,
     });
   } catch (err) {
-    res.status(500).json({ message: "حدث خطأ أثناء جلب النقاط" });
+    return next(err);
   }
 });
 
 export default router;
+
