@@ -1,30 +1,50 @@
+import compression from "compression";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-import helmet from "helmet";
-import compression from "compression";
-import morgan from "morgan";
 import rateLimit from "express-rate-limit";
-import connectDB from "./config/db.js";
-import driverRoutes from "./routes/driver.js";
-import earningsRoutes from "./routes/earnings.js";
-import locationRoutes from "./routes/location.js";
-import maintenanceRoutes from "./routes/maintenance.js";
-import notificationRoutes from "./routes/notification.js";
-import oilRoutes from "./routes/oil.js";
-import profileRoutes from "./routes/profile.js";
-import ratingRoutes from "./routes/rating.js";
-import reminderRoutes from "./routes/reminder.js";
-import settingsRoutes from "./routes/settings.js";
-import statusRoutes from "./routes/status.js";
-import summaryRoutes from "./routes/summary.js";
-import supportRoutes from "./routes/support.js";
-import tripRoutes from "./routes/trip.js";
-import vehicleRoutes from "./routes/vehicle.js";
-import fuelRoutes from "./routes/fuel.js";
+import helmet from "helmet";
+import { createServer } from "http";
+import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
-import { notFound, errorHandler } from "./Middleware/errorHandler.js";
+
+import connectDB from "./config/db.js";
+import { errorHandler, notFound } from "./Middleware/errorHandler.js";
+import chatRoutes from "./routes/Driver-Routes/chat.js";
+import driverRoutes from "./routes/Driver-Routes/driver.js";
+import earningsRoutes from "./routes/Driver-Routes/earnings.js";
+import fuelRoutes from "./routes/Driver-Routes/fuel.js";
+import locationRoutes from "./routes/Driver-Routes/location.js";
+import maintenanceRoutes from "./routes/Driver-Routes/maintenance.js";
+import notificationRoutes from "./routes/Driver-Routes/notification.js";
+import oilRoutes from "./routes/Driver-Routes/oil.js";
+import profileRoutes from "./routes/Driver-Routes/profile.js";
+import ratingRoutes from "./routes/Driver-Routes/rating.js";
+import reminderRoutes from "./routes/Driver-Routes/reminder.js";
+import settingsRoutes from "./routes/Driver-Routes/settings.js";
+import statusRoutes from "./routes/Driver-Routes/status.js";
+import summaryRoutes from "./routes/Driver-Routes/summary.js";
+import supportRoutes from "./routes/Driver-Routes/support.js";
+import tripRoutes from "./routes/Driver-Routes/trip.js";
+import vehicleRoutes from "./routes/Driver-Routes/vehicle.js";
+import { initSocket } from "./socket.js";
+import userRoutes from "./routes/user.js";
+import userProfileRoutes from "./routes/userProfile.js";
+import userChatRoutes from "./routes/userChat.js";
+import userLocationRoutes from "./routes/userLocation.js";
+import userFavoritesRoutes from "./routes/userFavorites.js";
+import userNotificationsRoutes from "./routes/userNotifications.js";
+import userWalletRoutes from "./routes/userWallet.js";
+import userSupportRoutes from "./routes/userSupport.js";
+import userRateAppRoutes from "./routes/userRateApp.js";
+import userSummaryRoutes from "./routes/userSummary.js";
+
+import userTripRoutes from "./routes/userTrip.js";
+
+
+
+
 
 dotenv.config();
 connectDB();
@@ -65,7 +85,24 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/location", locationRoutes);
 app.use("/api/summary", summaryRoutes);
 app.use("/api/fuel", fuelRoutes);
+app.use("/api/chat", chatRoutes);
+app.use("/public", express.static(path.join(__dirname, "public")));
 
+app.use("/api/user", userRoutes);
+app.use("/api/user/auth", userRoutes);
+app.use("/api/user/profile", userProfileRoutes);
+app.use("/api/user/trip", userTripRoutes);
+app.use("/api/user/trips", userTripRoutes);
+app.use("/api/user/chat", userChatRoutes);
+app.use("/api/user/location", userLocationRoutes);
+app.use("/api/user/favorites", userFavoritesRoutes);
+app.use("/api/user/notifications", userNotificationsRoutes);
+app.use("/api/user/wallet", userWalletRoutes);
+app.use("/api/user/support", userSupportRoutes);
+app.use("/api/user/rate-app", userRateAppRoutes);
+app.use("/api/user/summary", userSummaryRoutes);
+
+app.use(express.static("public"));
 // 404 and error handlers
 app.use(notFound);
 app.use(errorHandler);
@@ -73,13 +110,16 @@ app.use(errorHandler);
 // Load scheduled daily jobs
 import "./Jobs/cron.js";
 
+// Start HTTP server + Socket.io
+const server = createServer(app);
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+initSocket(server);
+server.listen(PORT, () => console.log(`?? Server running on port ${PORT}`));
 
 // 10-minute inactivity job (kept as-is)
 import cron from "node-cron";
-import Driver from "./models/driver.model.js";
-import DriverLocation from "./models/driver-location.model.js";
+import DriverLocation from "./models/Driver-Model/driver-location.model.js";
+import Driver from "./models/Driver-Model/driver.model.js";
 
 cron.schedule("*/10 * * * *", async () => {
   try {

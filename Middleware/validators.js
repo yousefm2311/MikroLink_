@@ -2,38 +2,38 @@ import { body } from "express-validator";
 
 export const signupValidator = [
   body("fullName").trim().notEmpty().withMessage("الاسم مطلوب"),
-  body("phone").trim().notEmpty().withMessage("رقم الهاتف مطلوب"),
-  body("email").isEmail().withMessage("بريد إلكتروني غير صالح"),
-  body("password").isLength({ min: 6 }).withMessage("الحد الأدنى 6 أحرف"),
+  body("phone").trim().notEmpty().withMessage("رقم الجوال مطلوب"),
+  body("email").isEmail().withMessage("بريد إلكتروني صالح مطلوب"),
+  body("password").isLength({ min: 6 }).withMessage("كلمة المرور يجب ألا تقل عن 6 أحرف"),
 ];
 
 export const loginValidator = [
-  body("email").isEmail().withMessage("بريد إلكتروني غير صالح"),
+  body("email").optional().isEmail().withMessage("بريد إلكتروني صالح مطلوب"),
   body("password").notEmpty().withMessage("كلمة المرور مطلوبة"),
 ];
 
 export const resendVerificationValidator = [
-  body("email").isEmail().withMessage("بريد إلكتروني غير صالح"),
+  body("email").isEmail().withMessage("بريد إلكتروني صالح مطلوب"),
 ];
 
 export const forgotPasswordValidator = [
-  body("email").isEmail().withMessage("بريد إلكتروني غير صالح"),
+  body("email").isEmail().withMessage("بريد إلكتروني صالح مطلوب"),
 ];
 
 export const verifyResetCodeValidator = [
-  body("email").isEmail().withMessage("بريد إلكتروني غير صالح"),
-  body("code").isLength({ min: 4 }).withMessage("رمز غير صالح"),
+  body("email").isEmail().withMessage("بريد إلكتروني صالح مطلوب"),
+  body("code").isLength({ min: 4 }).withMessage("رمز التحقق غير صالح"),
 ];
 
 export const resetPasswordValidator = [
-  body("email").isEmail().withMessage("بريد إلكتروني غير صالح"),
-  body("code").isLength({ min: 4 }).withMessage("رمز غير صالح"),
-  body("newPassword").isLength({ min: 6 }).withMessage("الحد الأدنى 6 أحرف"),
+  body("email").isEmail().withMessage("بريد إلكتروني صالح مطلوب"),
+  body("code").isLength({ min: 4 }).withMessage("رمز التحقق غير صالح"),
+  body("newPassword").isLength({ min: 6 }).withMessage("كلمة المرور الجديدة يجب ألا تقل عن 6 أحرف"),
 ];
 
 export const changePasswordValidator = [
-  body("currentPassword").notEmpty().withMessage("مطلوب"),
-  body("newPassword").isLength({ min: 6 }).withMessage("الحد الأدنى 6 أحرف"),
+  body("currentPassword").notEmpty().withMessage("كلمة المرور الحالية مطلوبة"),
+  body("newPassword").isLength({ min: 6 }).withMessage("كلمة المرور الجديدة يجب ألا تقل عن 6 أحرف"),
 ];
 
 export const vehicleUpsertValidator = [
@@ -46,27 +46,27 @@ export const vehicleUpsertValidator = [
 
 // Fuel
 export const fuelCreateValidator = [
-  body("liters").isFloat({ gt: 0 }).withMessage("اللترات مطلوبة وموجبة"),
-  body("cost").isFloat({ gt: 0 }).withMessage("التكلفة مطلوبة وموجبة"),
-  body("odometer").optional().isFloat({ gt: 0 }).withMessage("قراءة العداد غير صالحة"),
+  body("liters").isFloat({ gt: 0 }).withMessage("قيمة اللترات يجب أن تكون أكبر من 0"),
+  body("cost").isFloat({ gt: 0 }).withMessage("قيمة التكلفة يجب أن تكون أكبر من 0"),
+  body("odometer").optional().isFloat({ gt: 0 }).withMessage("عداد المسافة يجب أن يكون أكبر من 0"),
   body("stationName").optional().isString(),
 ];
 
 // Location
 export const liveLocationValidator = [
-  body("latitude").isFloat().withMessage("إحداثيات غير صالحة"),
-  body("longitude").isFloat().withMessage("إحداثيات غير صالحة"),
+  body("latitude").isFloat().withMessage("إحداثيات خط العرض مطلوبة وصحيحة"),
+  body("longitude").isFloat().withMessage("إحداثيات خط الطول مطلوبة وصحيحة"),
 ];
 
 export const tripLocationCreateValidator = [
   body("tripId").notEmpty().withMessage("معرف الرحلة مطلوب"),
-  body("latitude").isFloat().withMessage("إحداثيات غير صالحة"),
-  body("longitude").isFloat().withMessage("إحداثيات غير صالحة"),
+  body("latitude").isFloat().withMessage("إحداثيات خط العرض مطلوبة وصحيحة"),
+  body("longitude").isFloat().withMessage("إحداثيات خط الطول مطلوبة وصحيحة"),
 ];
 
 // Maintenance
 export const maintenanceCreateValidator = [
-  body("type").notEmpty().withMessage("النوع مطلوب"),
+  body("type").notEmpty().withMessage("نوع الصيانة مطلوب"),
   body("date").optional().isISO8601().toDate(),
   body("odometer").optional().isFloat({ gt: 0 }),
   body("cost").optional().isFloat({ min: 0 }),
@@ -75,13 +75,13 @@ export const maintenanceCreateValidator = [
 
 // Oil
 export const oilUpdateValidator = [
-  body("odometer").isFloat({ gt: 0 }).withMessage("قراءة العداد مطلوبة"),
-  body("nextOilChange").isFloat({ gt: 0 }).withMessage("قراءة الصيانة القادمة مطلوبة"),
+  body("odometer").isFloat({ gt: 0 }).withMessage("عداد المسافة يجب أن يكون أكبر من 0"),
+  body("nextOilChange").isFloat({ gt: 0 }).withMessage("المسافة حتى تغيير الزيت يجب أن تكون أكبر من 0"),
 ];
 
 // Reminder
 export const reminderCreateValidator = [
-  body("title").notEmpty().withMessage("العنوان مطلوب"),
+  body("title").notEmpty().withMessage("عنوان التذكير مطلوب"),
   body("details").optional().isString(),
   body("dueDate").optional().isISO8601().toDate(),
 ];
@@ -95,7 +95,7 @@ export const settingsUpdateValidator = [
 
 // Support
 export const supportCreateValidator = [
-  body("message").trim().notEmpty().withMessage("الرسالة مطلوبة"),
+  body("message").trim().notEmpty().withMessage("نص الرسالة مطلوب"),
 ];
 
 // Trip

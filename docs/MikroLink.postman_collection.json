@@ -1,0 +1,216 @@
+{
+  "info": {
+    "name": "MikroLink API (User & Driver)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "userToken", "value": "" },
+    { "key": "driverToken", "value": "" },
+    { "key": "tripId", "value": "" },
+    { "key": "reminderId", "value": "" },
+    { "key": "driverId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Auth",
+          "item": [
+            { "name": "Signup", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/user/signup", "body": { "mode": "raw", "raw": "{\n  \"fullName\": \"Ali Ahmed\",\n  \"phone\": \"01000000000\",\n  \"email\": \"ali@example.com\",\n  \"password\": \"secret123\"\n}" } } },
+            { "name": "Resend Verification", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/user/resend-verification", "body": { "mode": "raw", "raw": "{\n  \"email\": \"ali@example.com\"\n}" } } },
+            { "name": "Verify By Token", "request": { "method": "GET", "url": "{{baseUrl}}/api/user/verify/{{token}}" } },
+            { "name": "Login", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/user/login", "body": { "mode": "raw", "raw": "{\n  \"email\": \"ali@example.com\",\n  \"password\": \"secret123\"\n}" } } },
+            { "name": "Forgot Password", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/user/forgot-password", "body": { "mode": "raw", "raw": "{\n  \"email\": \"ali@example.com\"\n}" } } },
+            { "name": "Verify Reset Code", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/user/verify-reset-code", "body": { "mode": "raw", "raw": "{\n  \"email\":\"ali@example.com\",\n  \"code\":\"123456\"\n}" } } },
+            { "name": "Reset Password", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/user/reset-password", "body": { "mode": "raw", "raw": "{\n  \"email\":\"ali@example.com\",\n  \"code\":\"123456\",\n  \"newPassword\":\"newPass123\"\n}" } } },
+            { "name": "Change Password", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{userToken}}", "type": "string" } ] }, "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/user/change-password", "body": { "mode": "raw", "raw": "{\n  \"currentPassword\": \"secret123\",\n  \"newPassword\": \"newPass123\"\n}" } } },
+            { "name": "Refresh", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/user/refresh", "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"...\"\n}" } } },
+            { "name": "Logout", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/user/logout", "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"...\"\n}" } } }
+          ]
+        },
+        {
+          "name": "Profile",
+          "item": [
+            { "name": "Get Profile", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{userToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/user/profile" } },
+            { "name": "Update Profile", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{userToken}}", "type": "string" } ] }, "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/user/profile", "body": { "mode": "raw", "raw": "{\n  \"fullName\": \"Ali M.\",\n  \"phone\": \"01110000000\"\n}" } } }
+          ]
+        },
+        {
+          "name": "Trips",
+          "item": [
+            { "name": "Request Trip", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{userToken}}", "type": "string" } ] }, "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/user/trip/request", "body": { "mode": "raw", "raw": "{\n  \"origin\": \"Nasr City\",\n  \"destination\": \"Maadi\",\n  \"distance\": 15.4,\n  \"price\": 120,\n  \"preferredDriverId\": \"{{driverId}}\"\n}" } } },
+            { "name": "List Trips", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{userToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/user/trip" } },
+            { "name": "Current Trip", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{userToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/user/trip/current" } },
+            { "name": "Trip History", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{userToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/user/trip/history" } },
+            { "name": "Get Trip", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{userToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/user/trip/{{tripId}}" } },
+            { "name": "Cancel Trip", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{userToken}}", "type": "string" } ] }, "method": "PUT", "url": "{{baseUrl}}/api/user/trip/{{tripId}}/cancel" } },
+            { "name": "Rate Trip", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{userToken}}", "type": "string" } ] }, "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/user/trip/{{tripId}}/rate", "body": { "mode": "raw", "raw": "{\n  \"rating\": 5,\n  \"comment\": \"Great ride\"\n}" } } }
+          ]
+        },
+        {
+          "name": "Discover",
+          "item": [
+            { "name": "Available Drivers (nearby)", "request": { "method": "GET", "url": "{{baseUrl}}/api/location/available?latitude=30.05&longitude=31.23&vehicleType=" } }
+          ]
+        },
+        {
+          "name": "Chat",
+          "item": [
+            { "name": "Messages by Trip", "request": { "method": "GET", "url": "{{baseUrl}}/api/chat/{{tripId}}" } },
+            { "name": "Send Message", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/chat", "body": { "mode": "raw", "raw": "{\n  \"tripId\": \"{{tripId}}\",\n  \"senderId\": \"{{driverId}}\",\n  \"text\": \"Hello\"\n}" } } }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Driver",
+      "item": [
+        {
+          "name": "Auth",
+          "item": [
+            { "name": "Signup", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/driver/signup", "body": { "mode": "raw", "raw": "{\n  \"fullName\": \"Driver A\",\n  \"phone\": \"01200000000\",\n  \"email\": \"d@example.com\",\n  \"password\": \"secret123\"\n}" } } },
+            { "name": "Resend Verification", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/driver/resend-verification", "body": { "mode": "raw", "raw": "{\n  \"email\": \"d@example.com\"\n}" } } },
+            { "name": "Verify By Token", "request": { "method": "GET", "url": "{{baseUrl}}/api/driver/verify/{{token}}" } },
+            { "name": "Login", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/driver/login", "body": { "mode": "raw", "raw": "{\n  \"email\": \"d@example.com\",\n  \"password\": \"secret123\"\n}" } } },
+            { "name": "Forgot Password", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/driver/forgot-password", "body": { "mode": "raw", "raw": "{\n  \"email\": \"d@example.com\"\n}" } } },
+            { "name": "Verify Reset Code", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/driver/verify-reset-code", "body": { "mode": "raw", "raw": "{\n  \"email\":\"d@example.com\",\n  \"code\":\"123456\"\n}" } } },
+            { "name": "Reset Password", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/driver/reset-password", "body": { "mode": "raw", "raw": "{\n  \"email\":\"d@example.com\",\n  \"code\":\"123456\",\n  \"newPassword\":\"newPass123\"\n}" } } },
+            { "name": "Change Password", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/driver/change-password", "body": { "mode": "raw", "raw": "{\n  \"currentPassword\": \"secret123\",\n  \"newPassword\": \"newPass123\"\n}" } } },
+            { "name": "Refresh", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/driver/refresh", "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"...\"\n}" } } },
+            { "name": "Logout", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/driver/logout", "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"...\"\n}" } } }
+          ]
+        },
+        {
+          "name": "Profile",
+          "item": [
+            { "name": "Get Profile", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/profile" } },
+            { "name": "Update Profile", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/profile", "body": { "mode": "raw", "raw": "{\n  \"fullName\": \"Driver A\",\n  \"phone\": \"01200000000\"\n}" } } },
+            { "name": "Upload Documents", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "POST", "url": "{{baseUrl}}/api/profile/upload", "body": { "mode": "formdata", "formdata": [
+              { "key": "idFront", "type": "file", "src": "" },
+              { "key": "idBack", "type": "file", "src": "" },
+              { "key": "license", "type": "file", "src": "" },
+              { "key": "carPhoto", "type": "file", "src": "" },
+              { "key": "profilePhoto", "type": "file", "src": "" }
+            ] } } }
+          ]
+        },
+        {
+          "name": "Status",
+          "item": [
+            { "name": "Toggle Online", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "PUT", "url": "{{baseUrl}}/api/status/toggle" } }
+          ]
+        },
+        {
+          "name": "Location",
+          "item": [
+            { "name": "Live (POST)", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/location/live", "body": { "mode": "raw", "raw": "{\n  \"latitude\": 30.0444,\n  \"longitude\": 31.2357\n}" } } },
+            { "name": "Live (GET)", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/location/live" } },
+            { "name": "Trip Location Create", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/location", "body": { "mode": "raw", "raw": "{\n  \"tripId\": \"{{tripId}}\",\n  \"latitude\": 30.05,\n  \"longitude\": 31.23\n}" } } },
+            { "name": "Trip Locations (GET)", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/location/{{tripId}}" } },
+            { "name": "Available Drivers (public)", "request": { "method": "GET", "url": "{{baseUrl}}/api/location/available?latitude=30.05&longitude=31.23&vehicleType=" } }
+          ]
+        },
+        {
+          "name": "Trips",
+          "item": [
+            { "name": "List Trips", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/trip" } },
+            { "name": "Pending (user requests)", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/trip/pending" } },
+            { "name": "Accept Trip", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "POST", "url": "{{baseUrl}}/api/trip/{{tripId}}/accept" } },
+            { "name": "Start Accepted Trip", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "POST", "url": "{{baseUrl}}/api/trip/{{tripId}}/start" } },
+            { "name": "Start (driver-direct)", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/trip/start", "body": { "mode": "raw", "raw": "{\n  \"passengerName\": \"Guest\",\n  \"pickupLocation\": \"Point A\",\n  \"dropoffLocation\": \"Point B\",\n  \"fare\": 100,\n  \"distance\": 10\n}" } } },
+            { "name": "Complete Trip", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "POST", "url": "{{baseUrl}}/api/trip/{{tripId}}/complete" } },
+            { "name": "Cancel Trip", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "POST", "url": "{{baseUrl}}/api/trip/{{tripId}}/cancel" } },
+            { "name": "Current Trip", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/trip/current" } },
+            { "name": "History", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/trip/history" } }
+          ]
+        },
+        {
+          "name": "Vehicle",
+          "item": [
+            { "name": "Get Vehicle", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/vehicle" } },
+            { "name": "Upsert Vehicle", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/vehicle", "body": { "mode": "raw", "raw": "{\n  \"plateNumber\": \"ABC-1234\",\n  \"model\": \"Civic 2019\",\n  \"fuelLevel\": 50,\n  \"odometer\": 12345,\n  \"nextOilChange\": 17000\n}" } } }
+          ]
+        },
+        {
+          "name": "Oil",
+          "item": [
+            { "name": "Update", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/oil/update", "body": { "mode": "raw", "raw": "{\n  \"odometer\": 15000,\n  \"nextOilChange\": 20000\n}" } } },
+            { "name": "Get", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/oil" } }
+          ]
+        },
+        {
+          "name": "Maintenance",
+          "item": [
+            { "name": "Create", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/maintenance", "body": { "mode": "raw", "raw": "{\n  \"type\": \"brake change\",\n  \"date\": \"2025-01-20\",\n  \"odometer\": 15000,\n  \"cost\": 1200,\n  \"notes\": \"...\"\n}" } } },
+            { "name": "List", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/maintenance" } }
+          ]
+        },
+        {
+          "name": "Fuel",
+          "item": [
+            { "name": "Create Log", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/fuel", "body": { "mode": "raw", "raw": "{\n  \"liters\": 35.5,\n  \"cost\": 550,\n  \"odometer\": 15200,\n  \"stationName\": \"Total\"\n}" } } },
+            { "name": "List Logs", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/fuel" } },
+            { "name": "Summary", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/fuel/summary" } }
+          ]
+        },
+        {
+          "name": "Reminders",
+          "item": [
+            { "name": "Create", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/reminder", "body": { "mode": "raw", "raw": "{\n  \"title\": \"Insurance renewal\",\n  \"details\": \"...\",\n  \"dueDate\": \"2025-03-01\"\n}" } } },
+            { "name": "List", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/reminder" } },
+            { "name": "Mark Read", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "PUT", "url": "{{baseUrl}}/api/reminder/{{reminderId}}/read" } }
+          ]
+        },
+        {
+          "name": "Notifications",
+          "item": [
+            { "name": "List", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/notification" } }
+          ]
+        },
+        {
+          "name": "Settings",
+          "item": [
+            { "name": "Get", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/settings" } },
+            { "name": "Update", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/settings", "body": { "mode": "raw", "raw": "{\n  \"language\": \"ar\",\n  \"darkMode\": true,\n  \"notifications\": true\n}" } } }
+          ]
+        },
+        {
+          "name": "Summary",
+          "item": [
+            { "name": "Get", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/summary" } },
+            { "name": "Weekly", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/summary/weekly" } }
+          ]
+        },
+        {
+          "name": "Earnings",
+          "item": [
+            { "name": "Today", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/earnings/today" } },
+            { "name": "Month", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/earnings/month" } }
+          ]
+        },
+        {
+          "name": "Support",
+          "item": [
+            { "name": "Create", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/support", "body": { "mode": "raw", "raw": "{\n  \"message\": \"I need help...\"\n}" } } },
+            { "name": "List", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/support" } }
+          ]
+        },
+        {
+          "name": "Ratings",
+          "item": [
+            { "name": "List & Average", "request": { "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{driverToken}}", "type": "string" } ] }, "method": "GET", "url": "{{baseUrl}}/api/rating" } }
+          ]
+        },
+        {
+          "name": "Chat",
+          "item": [
+            { "name": "Messages by Trip", "request": { "method": "GET", "url": "{{baseUrl}}/api/chat/{{tripId}}" } },
+            { "name": "Send Message", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": "{{baseUrl}}/api/chat", "body": { "mode": "raw", "raw": "{\n  \"tripId\": \"{{tripId}}\",\n  \"senderId\": \"{{driverId}}\",\n  \"text\": \"Hello\"\n}" } } }
+          ]
+        }
+      ]
+    }
+  ]
+}

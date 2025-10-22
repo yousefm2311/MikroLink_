@@ -1,0 +1,127 @@
+import express from "express";
+import Trip from "../models/Driver-Model/trip.model.js"; // نفس الموديل اللي بيستخدمه السائق
+import Driver from "../models/Driver-Model/driver.model.js";
+import { protect as protect } from "../Middleware/auth.js";
+import { ok, created } from "../utils/api-response.js";
+import ApiError from "../utils/ApiError.js";
+
+const router = express.Router();
+
+/**
+ * 🟢 إنشاء طلب رحلة جديدة (من المستخدم)
+ * الحالة الافتراضية: pending
+ */
+router.post("/request", protect, async (req, res, next) => {
+  try {
+    const { origin, destination, distance, price, preferredDriverId } =
+      req.body;
+
+    // التحقق من السائق المفضل (اختياري)
+    let driverId = null;
+    if (preferredDriverId) {
+      const driver = await Driver.findById(preferredDriverId);
+      if (driver && driver.status === "online") {
+        driverId = driver._id;
+      }
+    }
+
+    const trip = await Trip.create({
+      userId: req.user._id,
+      driverId,
+      origin,
+      destination,
+      distance,
+      price,
+      status: "pending",
+      createdAt: new Date(),
+    });
+
+    return created(res, "🚗 تم إرسال طلب الرحلة بنجاح", trip);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/**
+ * 🔹 عرض جميع رحلات المستخدم
+ */
+router.get("/", protect, async (req, res, next) => {
+  try {
+    const trips = await Trip.find({ userId: req.user._id })
+      .populate("driverId", "fullName phone vehicleType")
+      .sort({ createdAt: -1 });
+
+    return ok(res, "✅ تم جلب رحلات المستخدم بنجاح", trips);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/**
+ * 🔹 عرض تفاصيل رحلة معينة
+ */
+router.get("/:id", protect, async (req, res, next) => {
+  try {
+    const trip = await Trip.findOne({
+      _id: req.params.id,
+      userId: req.user._id,
+    }).populate("driverId", "fullName phone vehicleType");
+
+    if (!trip) throw new ApiError(404, "الرحلة غير موجودة أو تم حذفها");
+
+    return ok(res, "📄 تفاصيل الرحلة", trip);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/**
+ * 🔴 إلغاء الرحلة (فقط لو الحالة pending أو accepted)
+ */
+router.put("/:id/cancel", protect, async (req, res, next) => {
+  try {
+    const trip = await Trip.findOne({
+      _id: req.params.id,
+      userId: req.user._id,
+    });
+
+    if (!trip) throw new ApiError(404, "الرحلة غير موجودة");
+    if (!["pending", "accepted"].includes(trip.status)) {
+      throw new ApiError(400, "لا يمكن إلغاء الرحلة بعد أن بدأت أو انتهت");
+    }
+
+    trip.status = "cancelled";
+    await trip.save();
+
+    return ok(res, "🚫 تم إلغاء الرحلة بنجاح", trip);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/**
+ * 🔹 تقييم السائق بعد انتهاء الرحلة
+ */
+router.post("/:id/rate", protect, async (req, res, next) => {
+  try {
+    const { rating, comment } = req.body;
+
+    const trip = await Trip.findOne({
+      _id: req.params.id,
+      userId: req.user._id,
+    });
+    if (!trip) throw new ApiError(404, "الرحلة غير موجودة");
+    if (trip.status !== "completed")
+      throw new ApiError(400, "يمكن تقييم السائق فقط بعد انتهاء الرحلة");
+
+    trip.userRating = { rating, comment };
+    await trip.save();
+
+    return ok(res, "⭐ تم إرسال تقييم السائق بنجاح", trip);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+export default router;
+

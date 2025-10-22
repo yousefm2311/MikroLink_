@@ -1,0 +1,38 @@
+import express from "express";
+import User from "../models/User-Model/user.model.js";
+import { protectUser as protect } from "../Middleware/auth.js";
+import { ok } from "../utils/api-response.js";
+import ApiError from "../utils/ApiError.js";
+import { MESSAGES } from "../utils/messages.js";
+
+const router = express.Router();
+
+// 🟢 عرض الملف الشخصي
+router.get("/", protect, async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).select("-password");
+    if (!user) throw new ApiError(404, MESSAGES.profile.not_found);
+    return ok(res, "تم جلب الملف الشخصي بنجاح", user);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// ✏️ تحديث الملف الشخصي
+router.put("/", protect, async (req, res, next) => {
+  try {
+    const { fullName, phone } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { fullName, phone },
+      { new: true }
+    ).select("-password");
+    if (!user) throw new ApiError(404, MESSAGES.profile.not_found);
+    return ok(res, "تم تحديث الملف الشخصي بنجاح", user);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+export default router;
+

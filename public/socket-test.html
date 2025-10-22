@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MikroLink Socket Test</title>
+    <style>
+      body { font-family: system-ui, Arial, sans-serif; margin: 20px; }
+      input, button { padding: 8px; margin: 4px; }
+      .row { margin: 8px 0; }
+      #log { height: 240px; overflow-y: auto; background: #f7f7f7; padding: 8px; border: 1px solid #ddd; }
+    </style>
+  </head>
+  <body>
+    <h2>MikroLink – Socket.io Quick Test</h2>
+
+    <div class="row">
+      <label>Trip ID:</label>
+      <input id="tripId" placeholder="trip ObjectId" size="28" />
+      <button id="joinTrip">Join Trip Room</button>
+    </div>
+    <div class="row">
+      <label>Driver ID:</label>
+      <input id="driverId" placeholder="driver ObjectId" size="28" />
+    </div>
+    <div class="row">
+      <label>Lat:</label>
+      <input id="lat" type="number" step="any" value="30.0444" />
+      <label>Lng:</label>
+      <input id="lng" type="number" step="any" value="31.2357" />
+      <button id="sendLocation">Send location:update</button>
+    </div>
+    <div class="row">
+      <label>Chat Text:</label>
+      <input id="chatText" size="40" placeholder="Type message..." />
+      <button id="sendChat">Send chat:send</button>
+    </div>
+    <div class="row">
+      <button id="typingOn">typing:on</button>
+      <button id="typingOff">typing:off</button>
+    </div>
+
+    <div id="log"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/socket-test.js"></script>
+  </body>
+</html>
