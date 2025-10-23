@@ -74,6 +74,42 @@ router.get("/", protectUser, async (req, res, next) => {
   }
 });
 
+router.get("/active", protectUser, async (req, res, next) => {
+  try {
+    const trip = await Trip.findOne({
+      userId: req.user._id,
+      status: { $in: ["pending", "accepted", "in_progress"] },
+    }).sort({ createdAt: -1 });
+    return ok(res, "Current trip", trip || null);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.get("/current", protectUser, async (req, res, next) => {
+  try {
+    const trip = await Trip.findOne({
+      userId: req.user._id,
+      status: { $in: ["pending", "accepted", "in_progress"] },
+    }).sort({ createdAt: -1 });
+    return ok(res, "Current trip", trip || null);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// User trip history (completed only)
+router.get("/history", protectUser, async (req, res, next) => {
+  try {
+    const trips = await Trip.find({
+      userId: req.user._id,
+      status: "completed",
+    }).sort({ completedAt: -1 });
+    return ok(res, "Trip history", trips);
+  } catch (err) {
+    return next(err);
+  }
+});
 // Get a single trip
 router.get("/:id", protectUser, async (req, res, next) => {
   try {
@@ -131,15 +167,7 @@ router.post("/:id/rate", protectUser, async (req, res, next) => {
 });
 
 // Active trip alias
-router.get("/active", protectUser, async (req, res, next) => {
-  try {
-    const trip = await Trip.findOne({
-      userId: req.user._id,
-      status: { $in: ["pending", "accepted", "in_progress"] },
-    }).sort({ createdAt: -1 });
-    return ok(res, "Current trip", trip || null);
-  } catch (err) { return next(err); }
-});
+
 
 // Pay for trip via wallet
 router.post("/:id/pay", protectUser, async (req, res, next) => {
@@ -159,27 +187,6 @@ router.post("/:id/pay", protectUser, async (req, res, next) => {
 });
 
 // Get user's current active trip (pending/accepted/in_progress)
-router.get("/current", protectUser, async (req, res, next) => {
-  try {
-    const trip = await Trip.findOne({
-      userId: req.user._id,
-      status: { $in: ["pending", "accepted", "in_progress"] },
-    }).sort({ createdAt: -1 });
-    return ok(res, "Current trip", trip || null);
-  } catch (err) {
-    return next(err);
-  }
-});
 
-// User trip history (completed only)
-router.get("/history", protectUser, async (req, res, next) => {
-  try {
-    const trips = await Trip.find({ userId: req.user._id, status: "completed" })
-      .sort({ completedAt: -1 });
-    return ok(res, "Trip history", trips);
-  } catch (err) {
-    return next(err);
-  }
-});
 
 export default router;
