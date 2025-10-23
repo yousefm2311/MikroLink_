@@ -1,0 +1,65 @@
+{
+  "info": {"name": "MikroLink – User APIs", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},
+  "variable": [
+    {"key":"baseUrl","value":"http://localhost:5000"},
+    {"key":"userToken","value":""},
+    {"key":"driverId","value":""},
+    {"key":"tripId","value":""},
+    {"key":"notificationId","value":""}
+  ],
+  "item": [
+    {"name":"Auth","item":[
+      {"name":"Signup","request":{"method":"POST","url":"{{baseUrl}}/api/user/signup","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"fullName\":\"User One\",\n  \"phone\":\"0100\",\n  \"email\":\"user@example.com\",\n  \"password\":\"pass1234\"\n}"}}},
+      {"name":"Login","request":{"method":"POST","url":"{{baseUrl}}/api/user/login","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"email\":\"user@example.com\",\n  \"password\":\"pass1234\"\n}"}}}
+    ]},
+    {"name":"Profile","item":[
+      {"name":"Get","request":{"method":"GET","url":"{{baseUrl}}/api/user/profile/","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}]}},
+      {"name":"Update","request":{"method":"PUT","url":"{{baseUrl}}/api/user/profile/","header":[{"key":"Authorization","value":"Bearer {{userToken}}"},{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"fullName\":\"User Updated\"\n}"}}},
+      {"name":"Upload Avatar","request":{"method":"POST","url":"{{baseUrl}}/api/user/profile/avatar","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}],"body":{"mode":"formdata","formdata":[{"key":"avatar","type":"file","src":""}]}}}
+    ]},
+    {"name":"Trip","item":[
+      {"name":"Request","request":{"method":"POST","url":"{{baseUrl}}/api/user/trip/request","header":[{"key":"Authorization","value":"Bearer {{userToken}}"},{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"origin\":\"A\",\n  \"destination\":\"B\",\n  \"distance\":10,\n  \"price\":50\n}"}}},
+      {"name":"List","request":{"method":"GET","url":"{{baseUrl}}/api/user/trip/","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}]}},
+      {"name":"Get","request":{"method":"GET","url":"{{baseUrl}}/api/user/trip/{{tripId}}","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}]}},
+      {"name":"Cancel","request":{"method":"PUT","url":"{{baseUrl}}/api/user/trip/{{tripId}}/cancel","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}]}},
+      {"name":"Pay","request":{"method":"POST","url":"{{baseUrl}}/api/user/trip/{{tripId}}/pay","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}]}},
+      {"name":"Rate","request":{"method":"POST","url":"{{baseUrl}}/api/user/trip/{{tripId}}/rate","header":[{"key":"Authorization","value":"Bearer {{userToken}}"},{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"rating\":5,\n  \"comment\":\"Great\"\n}"}}},
+      {"name":"Active","request":{"method":"GET","url":"{{baseUrl}}/api/user/trip/active","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}]}},
+      {"name":"Current","request":{"method":"GET","url":"{{baseUrl}}/api/user/trip/current","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}]}},
+      {"name":"History","request":{"method":"GET","url":"{{baseUrl}}/api/user/trip/history","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}]}}
+    ]},
+    {"name":"Chat","item":[
+      {"name":"Trip Messages","request":{"method":"GET","url":"{{baseUrl}}/api/user/chat/{{tripId}}","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}]}}
+    ]},
+    {"name":"Location","item":[
+      {"name":"Update","request":{"method":"POST","url":"{{baseUrl}}/api/user/location/","header":[{"key":"Authorization","value":"Bearer {{userToken}}"},{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"latitude\":30,\n  \"longitude\":31\n}"}}},
+      {"name":"Driver Live by Trip","request":{"method":"GET","url":"{{baseUrl}}/api/user/location/{{tripId}}","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}]}}
+    ]},
+    {"name":"Favorites","item":[
+      {"name":"List","request":{"method":"GET","url":"{{baseUrl}}/api/user/favorites/","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}]}},
+      {"name":"Add","request":{"method":"POST","url":"{{baseUrl}}/api/user/favorites/{{driverId}}","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}]}},
+      {"name":"Remove","request":{"method":"DELETE","url":"{{baseUrl}}/api/user/favorites/{{driverId}}","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}]}}
+    ]},
+    {"name":"Notifications","item":[
+      {"name":"List","request":{"method":"GET","url":"{{baseUrl}}/api/user/notifications/","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}]}},
+      {"name":"Mark Read","request":{"method":"PUT","url":"{{baseUrl}}/api/user/notifications/{{notificationId}}/read","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}]}},
+      {"name":"Delete","request":{"method":"DELETE","url":"{{baseUrl}}/api/user/notifications/{{notificationId}}","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}]}}
+    ]},
+    {"name":"Wallet","item":[
+      {"name":"Get","request":{"method":"GET","url":"{{baseUrl}}/api/user/wallet/","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}]}},
+      {"name":"Add","request":{"method":"POST","url":"{{baseUrl}}/api/user/wallet/add","header":[{"key":"Authorization","value":"Bearer {{userToken}}"},{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"amount\":100\n}"}}},
+      {"name":"Pay Trip","request":{"method":"POST","url":"{{baseUrl}}/api/user/wallet/pay/{{tripId}}","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}]}}
+    ]},
+    {"name":"Support","item":[
+      {"name":"Create","request":{"method":"POST","url":"{{baseUrl}}/api/user/support/","header":[{"key":"Authorization","value":"Bearer {{userToken}}"},{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"message\":\"Need help\"\n}"}}},
+      {"name":"List","request":{"method":"GET","url":"{{baseUrl}}/api/user/support/","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}]}}
+    ]},
+    {"name":"Rate App","item":[
+      {"name":"Create","request":{"method":"POST","url":"{{baseUrl}}/api/user/rate-app/","header":[{"key":"Authorization","value":"Bearer {{userToken}}"},{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"stars\":5,\n  \"comment\":\"Great app\"\n}"}}}
+    ]},
+    {"name":"Summary","item":[
+      {"name":"Overview","request":{"method":"GET","url":"{{baseUrl}}/api/user/summary/","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}]}}
+    ]}
+  ]
+}
+

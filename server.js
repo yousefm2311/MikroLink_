@@ -11,36 +11,50 @@ import { fileURLToPath } from "url";
 
 import connectDB from "./config/db.js";
 import { errorHandler, notFound } from "./Middleware/errorHandler.js";
-import chatRoutes from "./routes/Driver-Routes/chat.js";
-import driverRoutes from "./routes/Driver-Routes/driver.js";
-import earningsRoutes from "./routes/Driver-Routes/earnings.js";
-import fuelRoutes from "./routes/Driver-Routes/fuel.js";
-import locationRoutes from "./routes/Driver-Routes/location.js";
-import maintenanceRoutes from "./routes/Driver-Routes/maintenance.js";
-import notificationRoutes from "./routes/Driver-Routes/notification.js";
-import oilRoutes from "./routes/Driver-Routes/oil.js";
-import profileRoutes from "./routes/Driver-Routes/profile.js";
-import ratingRoutes from "./routes/Driver-Routes/rating.js";
-import reminderRoutes from "./routes/Driver-Routes/reminder.js";
-import settingsRoutes from "./routes/Driver-Routes/settings.js";
-import statusRoutes from "./routes/Driver-Routes/status.js";
-import summaryRoutes from "./routes/Driver-Routes/summary.js";
-import supportRoutes from "./routes/Driver-Routes/support.js";
-import tripRoutes from "./routes/Driver-Routes/trip.js";
-import vehicleRoutes from "./routes/Driver-Routes/vehicle.js";
+import chatRoutes from "./routes/Driver-Routes/chatRoute.js";
+import driverRoutes from "./routes/Driver-Routes/driverRoute.js";
+import earningsRoutes from "./routes/Driver-Routes/earningsRoute.js";
+import fuelRoutes from "./routes/Driver-Routes/fuelRoute.js";
+import locationRoutes from "./routes/Driver-Routes/locationRoute.js";
+import maintenanceRoutes from "./routes/Driver-Routes/maintenanceRoute.js";
+import notificationRoutes from "./routes/Driver-Routes/notificationRoute.js";
+import oilRoutes from "./routes/Driver-Routes/oilRoute.js";
+import profileRoutes from "./routes/Driver-Routes/profileRoute.js";
+import ratingRoutes from "./routes/Driver-Routes/ratingRoute.js";
+import reminderRoutes from "./routes/Driver-Routes/reminderRoute.js";
+import settingsRoutes from "./routes/Driver-Routes/settingsRoute.js";
+import statusRoutes from "./routes/Driver-Routes/statusRoute.js";
+import summaryRoutes from "./routes/Driver-Routes/summaryRoute.js";
+import supportRoutes from "./routes/Driver-Routes/supportRoute.js";
+import tripRoutes from "./routes/Driver-Routes/tripRoute.js";
+import vehicleRoutes from "./routes/Driver-Routes/vehicleRoute.js";
+import userRoutes from "./routes/User-Routes/userRoute.js";
+import userChatRoutes from "./routes/User-Routes/userChatRoute.js";
+import userFavoritesRoutes from "./routes/User-Routes/userFavoritesRoute.js";
+import userLocationRoutes from "./routes/User-Routes/userLocationRoute.js";
+import userNotificationsRoutes from "./routes/User-Routes/userNotificationsRoute.js";
+import userProfileRoutes from "./routes/User-Routes/userProfileRoute.js";
+import userRateAppRoutes from "./routes/User-Routes/userRateAppRoute.js";
+import userSummaryRoutes from "./routes/User-Routes/userSummaryRoute.js";
+import userSupportRoutes from "./routes/User-Routes/userSupportRoute.js";
+import userWalletRoutes from "./routes/User-Routes/userWalletRoute.js";
 import { initSocket } from "./socket.js";
-import userRoutes from "./routes/user.js";
-import userProfileRoutes from "./routes/userProfile.js";
-import userChatRoutes from "./routes/userChat.js";
-import userLocationRoutes from "./routes/userLocation.js";
-import userFavoritesRoutes from "./routes/userFavorites.js";
-import userNotificationsRoutes from "./routes/userNotifications.js";
-import userWalletRoutes from "./routes/userWallet.js";
-import userSupportRoutes from "./routes/userSupport.js";
-import userRateAppRoutes from "./routes/userRateApp.js";
-import userSummaryRoutes from "./routes/userSummary.js";
 
-import userTripRoutes from "./routes/userTrip.js";
+import userTripRoutes from "./routes/User-Routes/userTripRoute.js";
+// Admin routes
+import adminAuthRoutes from "./routes/Admin-Routes/adminAuthRoute.js";
+import adminDriversRoutes from "./routes/Admin-Routes/adminDriversRoute.js";
+import adminUsersRoutes from "./routes/Admin-Routes/adminUsersRoute.js";
+import adminTripsRoutes from "./routes/Admin-Routes/adminTripsRoute.js";
+import adminChatRoutes from "./routes/Admin-Routes/adminChatRoute.js";
+import adminVehicleRoutes from "./routes/Admin-Routes/adminVehicleRoute.js";
+import adminEarningsRoutes from "./routes/Admin-Routes/adminEarningsRoute.js";
+import adminNotificationsRoutes from "./routes/Admin-Routes/adminNotificationsRoute.js";
+import adminSettingsRoutes from "./routes/Admin-Routes/adminSettingsRoute.js";
+import adminLiveRoutes from "./routes/Admin-Routes/adminLiveRoute.js";
+import adminReportsRoutes from "./routes/Admin-Routes/adminReportsRoute.js";
+import adminSupportRoutes from "./routes/Admin-Routes/adminSupportRoute.js";
+import adminVerifyRoutes from "./routes/Admin-Routes/adminVerifyRoute.js";
 
 
 
@@ -102,6 +116,21 @@ app.use("/api/user/support", userSupportRoutes);
 app.use("/api/user/rate-app", userRateAppRoutes);
 app.use("/api/user/summary", userSummaryRoutes);
 
+// Admin route mounts
+app.use("/api/admin/auth", adminAuthRoutes);
+app.use("/api/admin/drivers", adminDriversRoutes);
+app.use("/api/admin/users", adminUsersRoutes);
+app.use("/api/admin/trips", adminTripsRoutes);
+app.use("/api/admin/chat", adminChatRoutes);
+app.use("/api/admin/vehicles", adminVehicleRoutes);
+app.use("/api/admin/earnings", adminEarningsRoutes);
+app.use("/api/admin/notifications", adminNotificationsRoutes);
+app.use("/api/admin/settings", adminSettingsRoutes);
+app.use("/api/admin/live", adminLiveRoutes);
+app.use("/api/admin/reports", adminReportsRoutes);
+app.use("/api/admin/support", adminSupportRoutes);
+app.use("/api/admin/verify", adminVerifyRoutes);
+
 app.use(express.static("public"));
 // 404 and error handlers
 app.use(notFound);
@@ -137,3 +166,4 @@ cron.schedule("*/10 * * * *", async () => {
     console.error("Error in inactivity job:", err.message);
   }
 });
+

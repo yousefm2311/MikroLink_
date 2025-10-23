@@ -1,0 +1,190 @@
+{
+  "info": {"name": "MikroLink - Full API (User + Driver)", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},
+  "variable": [
+    {"key": "baseUrl", "value": "http://localhost:5000"},
+    {"key": "userToken", "value": ""},
+    {"key": "userRefreshToken", "value": ""},
+    {"key": "driverToken", "value": ""},
+    {"key": "driverRefreshToken", "value": ""},
+    {"key": "tripId", "value": ""},
+    {"key": "driverId", "value": ""},
+    {"key": "notificationId", "value": ""},
+    {"key": "reminderId", "value": ""}
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "var url = pm.request.url.toString();",
+          "var token = null;",
+          "if (url.indexOf('/api/user/') !== -1) { token = pm.environment.get('userToken'); }",
+          "else if (url.indexOf('/api/driver/') !== -1 || url.indexOf('/api/profile') !== -1 || url.indexOf('/api/trip') !== -1 || url.indexOf('/api/fuel') !== -1 || url.indexOf('/api/oil') !== -1 || url.indexOf('/api/vehicle') !== -1 || url.indexOf('/api/maintenance') !== -1 || url.indexOf('/api/support') !== -1 || url.indexOf('/api/summary') !== -1 || url.indexOf('/api/earnings') !== -1 || url.indexOf('/api/location') !== -1 || url.indexOf('/api/settings') !== -1 || url.indexOf('/api/rating') !== -1 || url.indexOf('/api/reminder') !== -1) { token = pm.environment.get('driverToken'); }",
+          "if (token) { pm.request.headers.upsert({ key: 'Authorization', value: 'Bearer ' + token }); }"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "User",
+      "item": [
+        {"name": "Auth", "item": [
+          {"name": "Signup", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/user/auth/signup", "body": {"mode":"raw","raw":"{\n  \"fullName\": \"Ali Ahmed\",\n  \"phone\": \"01000000000\",\n  \"email\": \"ali@example.com\",\n  \"password\": \"secret123\"\n}"}}},
+          {"name": "Resend Verification", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/user/auth/resend", "body": {"mode":"raw","raw":"{\n  \"email\": \"ali@example.com\"\n}"}}},
+          {"name": "Verify (POST token)", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/user/auth/verify", "body": {"mode":"raw","raw":"{\n  \"token\": \"<paste verification token>\"\n}"}}},
+          {"name": "Verify (GET)", "request": {"method": "GET", "url": "{{baseUrl}}/api/user/verify/{{token}}"}},
+          {"name": "Login (email)", "event":[{"listen":"test","script":{"type":"text/javascript","exec":["var j = pm.response.json();","if(j && j.data){"," if(j.data.accessToken){ pm.environment.set('userToken', j.data.accessToken); }"," if(j.data.refreshToken){ pm.environment.set('userRefreshToken', j.data.refreshToken); }","}"]}}], "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/user/auth/login", "body": {"mode":"raw","raw":"{\n  \"email\": \"ali@example.com\",\n  \"password\": \"secret123\"\n}"}}},
+          {"name": "Login (phone)", "event":[{"listen":"test","script":{"type":"text/javascript","exec":["var j = pm.response.json();","if(j && j.data){"," if(j.data.accessToken){ pm.environment.set('userToken', j.data.accessToken); }"," if(j.data.refreshToken){ pm.environment.set('userRefreshToken', j.data.refreshToken); }","}"]}}], "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/user/auth/login", "body": {"mode":"raw","raw":"{\n  \"phone\": \"01000000000\",\n  \"password\": \"secret123\"\n}"}}},
+          {"name": "Forgot", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/user/auth/forgot", "body": {"mode":"raw","raw":"{\n  \"email\": \"ali@example.com\"\n}"}}},
+          {"name": "Verify Reset Code", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/user/auth/verify-reset", "body": {"mode":"raw","raw":"{\n  \"email\":\"ali@example.com\",\n  \"code\":\"123456\"\n}"}}},
+          {"name": "Reset Password", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/user/auth/reset", "body": {"mode":"raw","raw":"{\n  \"email\":\"ali@example.com\",\n  \"code\":\"123456\",\n  \"newPassword\":\"newPass123\"\n}"}}},
+          {"name": "Change Password", "request": {"method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/user/auth/change", "body": {"mode":"raw","raw":"{\n  \"currentPassword\": \"secret123\",\n  \"newPassword\": \"newPass123\"\n}"}}},
+          {"name": "Refresh", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/user/refresh", "body": {"mode":"raw","raw":"{\n  \"refreshToken\": \"{{userRefreshToken}}\"\n}"}}},
+          {"name": "Logout", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/user/auth/logout", "body": {"mode":"raw","raw":"{\n  \"refreshToken\": \"{{userRefreshToken}}\"\n}"}}}
+        ]},
+        {"name": "Profile", "item": [
+          {"name": "Get", "request": {"method": "GET", "url": "{{baseUrl}}/api/user/profile" }},
+          {"name": "Update", "request": {"method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/user/profile", "body": {"mode":"raw","raw":"{\n  \"fullName\": \"Ali M.\",\n  \"phone\": \"01110000000\"\n}"}}},
+          {"name": "Upload Avatar", "request": {"method": "POST", "url": "{{baseUrl}}/api/user/profile/avatar", "body": {"mode":"formdata","formdata":[{"key":"avatar","type":"file","src":""}]}}},
+          {"name": "Delete Account", "request": {"method": "DELETE", "url": "{{baseUrl}}/api/user/profile" }}
+        ]},
+        {"name": "Trips", "item": [
+          {"name": "Create", "event":[{"listen":"test","script":{"type":"text/javascript","exec":["var j = pm.response.json();","if(j && j.data && j.data._id){ pm.environment.set('tripId', j.data._id); }"]}}], "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/user/trips", "body": {"mode":"raw","raw":"{\n  \"origin\": \"Nasr City\",\n  \"destination\": \"Maadi\",\n  \"distance\": 15.4,\n  \"price\": 120,\n  \"preferredDriverId\": \"{{driverId}}\"\n}"}}},
+          {"name": "List", "request": {"method": "GET", "url": "{{baseUrl}}/api/user/trips" }},
+          {"name": "Active", "request": {"method": "GET", "url": "{{baseUrl}}/api/user/trips/active" }},
+          {"name": "History", "request": {"method": "GET", "url": "{{baseUrl}}/api/user/trip/history" }},
+          {"name": "Get by ID", "request": {"method": "GET", "url": "{{baseUrl}}/api/user/trips/{{tripId}}" }},
+          {"name": "Cancel", "request": {"method": "PUT", "url": "{{baseUrl}}/api/user/trips/{{tripId}}/cancel" }},
+          {"name": "Rate Driver", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/user/trips/{{tripId}}/rate", "body": {"mode":"raw","raw":"{\n  \"rating\": 5,\n  \"comment\": \"Great ride\"\n}"}}},
+          {"name": "Pay (via trips)", "request": {"method": "POST", "url": "{{baseUrl}}/api/user/trips/{{tripId}}/pay" }}
+        ]},
+        {"name": "Location", "item": [
+          {"name": "Update User Location", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/user/location", "body": {"mode":"raw","raw":"{\n  \"latitude\": 30.05,\n  \"longitude\": 31.23\n}"}}},
+          {"name": "Get Driver Live Location", "request": {"method": "GET", "url": "{{baseUrl}}/api/user/location/{{tripId}}" }}
+        ]},
+        {"name": "Favorites", "item": [
+          {"name": "List", "request": {"method": "GET", "url": "{{baseUrl}}/api/user/favorites" }},
+          {"name": "Add", "request": {"method": "POST", "url": "{{baseUrl}}/api/user/favorites/{{driverId}}" }},
+          {"name": "Remove", "request": {"method": "DELETE", "url": "{{baseUrl}}/api/user/favorites/{{driverId}}" }}
+        ]},
+        {"name": "Notifications", "item": [
+          {"name": "List", "request": {"method": "GET", "url": "{{baseUrl}}/api/user/notifications" }},
+          {"name": "Mark Read", "request": {"method": "PUT", "url": "{{baseUrl}}/api/user/notifications/{{notificationId}}/read" }},
+          {"name": "Delete", "request": {"method": "DELETE", "url": "{{baseUrl}}/api/user/notifications/{{notificationId}}" }}
+        ]},
+        {"name": "Wallet", "item": [
+          {"name": "Get", "request": {"method": "GET", "url": "{{baseUrl}}/api/user/wallet" }},
+          {"name": "Add Balance", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/user/wallet/add", "body": {"mode":"raw","raw":"{\n  \"amount\": 500\n}"}}},
+          {"name": "Pay (via wallet)", "request": {"method": "POST", "url": "{{baseUrl}}/api/user/wallet/pay/{{tripId}}" }}
+        ]},
+        {"name": "Support", "item": [
+          {"name": "Create", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/user/support", "body": {"mode":"raw","raw":"{\n  \"message\": \"I need help...\"\n}"}}},
+          {"name": "List", "request": {"method": "GET", "url": "{{baseUrl}}/api/user/support" }}
+        ]},
+        {"name": "Rate App", "item": [
+          {"name": "Rate", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/user/rate-app", "body": {"mode":"raw","raw":"{\n  \"stars\": 5,\n  \"comment\": \"Great app!\"\n}"}}}
+        ]},
+        {"name": "Summary", "item": [
+          {"name": "Get", "request": {"method": "GET", "url": "{{baseUrl}}/api/user/summary" }}
+        ]},
+        {"name": "Chat", "item": [
+          {"name": "Messages by Trip", "request": {"method": "GET", "url": "{{baseUrl}}/api/user/chat/{{tripId}}" }}
+        ]}
+      ]
+    },
+    {
+      "name": "Driver",
+      "item": [
+        {"name": "Auth", "item": [
+          {"name": "Signup", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/driver/signup", "body": {"mode":"raw","raw":"{\n  \"fullName\": \"Driver A\",\n  \"phone\": \"01200000000\",\n  \"email\": \"d@example.com\",\n  \"password\": \"secret123\"\n}"}}},
+          {"name": "Resend Verification", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/driver/resend-verification", "body": {"mode":"raw","raw":"{\n  \"email\": \"d@example.com\"\n}"}}},
+          {"name": "Verify (GET)", "request": {"method": "GET", "url": "{{baseUrl}}/api/driver/verify/{{token}}"}},
+          {"name": "Login", "event":[{"listen":"test","script":{"type":"text/javascript","exec":["var j = pm.response.json();","if(j && j.data){"," if(j.data.accessToken){ pm.environment.set('driverToken', j.data.accessToken); }"," if(j.data.refreshToken){ pm.environment.set('driverRefreshToken', j.data.refreshToken); }","}"]}}], "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/driver/login", "body": {"mode":"raw","raw":"{\n  \"email\": \"d@example.com\",\n  \"password\": \"secret123\"\n}"}}},
+          {"name": "Forgot", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/driver/forgot-password", "body": {"mode":"raw","raw":"{\n  \"email\": \"d@example.com\"\n}"}}},
+          {"name": "Verify Reset Code", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/driver/verify-reset-code", "body": {"mode":"raw","raw":"{\n  \"email\":\"d@example.com\",\n  \"code\":\"123456\"\n}"}}},
+          {"name": "Reset Password", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/driver/reset-password", "body": {"mode":"raw","raw":"{\n  \"email\":\"d@example.com\",\n  \"code\":\"123456\",\n  \"newPassword\":\"newPass123\"\n}"}}},
+          {"name": "Change Password", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/driver/change-password", "body": {"mode":"raw","raw":"{\n  \"currentPassword\": \"secret123\",\n  \"newPassword\": \"newPass123\"\n}"}}},
+          {"name": "Refresh", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/driver/refresh", "body": {"mode":"raw","raw":"{\n  \"refreshToken\": \"{{driverRefreshToken}}\"\n}"}}},
+          {"name": "Logout", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/driver/logout", "body": {"mode":"raw","raw":"{\n  \"refreshToken\": \"{{driverRefreshToken}}\"\n}"}}}
+        ]},
+        {"name": "Profile", "item": [
+          {"name": "Get", "request": {"method": "GET", "url": "{{baseUrl}}/api/profile" }},
+          {"name": "Update", "request": {"method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/profile", "body": {"mode":"raw","raw":"{\n  \"fullName\": \"Driver A\",\n  \"phone\": \"01200000000\"\n}"}}},
+          {"name": "Upload Documents", "request": {"method": "POST", "url": "{{baseUrl}}/api/profile/upload", "body": {"mode":"formdata","formdata":[{"key":"idFront","type":"file","src":""},{"key":"idBack","type":"file","src":""},{"key":"license","type":"file","src":""},{"key":"carPhoto","type":"file","src":""},{"key":"profilePhoto","type":"file","src":""}]}}}
+        ]},
+        {"name": "Status", "item": [
+          {"name": "Toggle Online", "request": {"method": "PUT", "url": "{{baseUrl}}/api/status/toggle" }}
+        ]},
+        {"name": "Location", "item": [
+          {"name": "Live (POST)", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/location/live", "body": {"mode":"raw","raw":"{\n  \"latitude\": 30.0444,\n  \"longitude\": 31.2357\n}"}}},
+          {"name": "Live (GET)", "request": {"method": "GET", "url": "{{baseUrl}}/api/location/live" }},
+          {"name": "Trip Location Create", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/location", "body": {"mode":"raw","raw":"{\n  \"tripId\": \"{{tripId}}\",\n  \"latitude\": 30.05,\n  \"longitude\": 31.23\n}"}}},
+          {"name": "Trip Locations (GET)", "request": {"method": "GET", "url": "{{baseUrl}}/api/location/{{tripId}}" }},
+          {"name": "Available Drivers (Public)", "request": {"method": "GET", "url": "{{baseUrl}}/api/location/available?latitude=30.05&longitude=31.23" }}
+        ]},
+        {"name": "Trips", "item": [
+          {"name": "List", "request": {"method": "GET", "url": "{{baseUrl}}/api/trip" }},
+          {"name": "Pending (user requests)", "request": {"method": "GET", "url": "{{baseUrl}}/api/trip/pending" }},
+          {"name": "Accept", "request": {"method": "POST", "url": "{{baseUrl}}/api/trip/{{tripId}}/accept" }},
+          {"name": "Start Accepted", "request": {"method": "POST", "url": "{{baseUrl}}/api/trip/{{tripId}}/start" }},
+          {"name": "Start (driver-direct)", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/trip/start", "body": {"mode":"raw","raw":"{\n  \"passengerName\": \"Guest\",\n  \"pickupLocation\": \"Point A\",\n  \"dropoffLocation\": \"Point B\",\n  \"fare\": 100,\n  \"distance\": 10\n}"}}},
+          {"name": "Complete", "request": {"method": "POST", "url": "{{baseUrl}}/api/trip/{{tripId}}/complete" }},
+          {"name": "Cancel", "request": {"method": "POST", "url": "{{baseUrl}}/api/trip/{{tripId}}/cancel" }},
+          {"name": "Current", "request": {"method": "GET", "url": "{{baseUrl}}/api/trip/current" }},
+          {"name": "History", "request": {"method": "GET", "url": "{{baseUrl}}/api/trip/history" }}
+        ]},
+        {"name": "Vehicle", "item": [
+          {"name": "Get", "request": {"method": "GET", "url": "{{baseUrl}}/api/vehicle" }},
+          {"name": "Upsert", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/vehicle", "body": {"mode":"raw","raw":"{\n  \"plateNumber\": \"ABC-1234\",\n  \"model\": \"Civic 2019\",\n  \"fuelLevel\": 50,\n  \"odometer\": 12345,\n  \"nextOilChange\": 17000\n}"}}}
+        ]},
+        {"name": "Oil", "item": [
+          {"name": "Update", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/oil/update", "body": {"mode":"raw","raw":"{\n  \"odometer\": 15000,\n  \"nextOilChange\": 20000\n}"}}},
+          {"name": "Get", "request": {"method": "GET", "url": "{{baseUrl}}/api/oil" }}
+        ]},
+        {"name": "Maintenance", "item": [
+          {"name": "Create", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/maintenance", "body": {"mode":"raw","raw":"{\n  \"type\": \"brake change\",\n  \"date\": \"2025-01-20\",\n  \"odometer\": 15000,\n  \"cost\": 1200,\n  \"notes\": \"...\"\n}"}}},
+          {"name": "List", "request": {"method": "GET", "url": "{{baseUrl}}/api/maintenance" }}
+        ]},
+        {"name": "Fuel", "item": [
+          {"name": "Create Log", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/fuel", "body": {"mode":"raw","raw":"{\n  \"liters\": 35.5,\n  \"cost\": 550,\n  \"odometer\": 15200,\n  \"stationName\": \"Total\"\n}"}}},
+          {"name": "List Logs", "request": {"method": "GET", "url": "{{baseUrl}}/api/fuel" }},
+          {"name": "Summary", "request": {"method": "GET", "url": "{{baseUrl}}/api/fuel/summary" }}
+        ]},
+        {"name": "Reminders", "item": [
+          {"name": "Create", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/reminder", "body": {"mode":"raw","raw":"{\n  \"title\": \"Insurance renewal\",\n  \"details\": \"...\",\n  \"dueDate\": \"2025-03-01\"\n}"}}},
+          {"name": "List", "request": {"method": "GET", "url": "{{baseUrl}}/api/reminder" }},
+          {"name": "Mark Read", "request": {"method": "PUT", "url": "{{baseUrl}}/api/reminder/{{reminderId}}/read" }}
+        ]},
+        {"name": "Notifications", "item": [
+          {"name": "List", "request": {"method": "GET", "url": "{{baseUrl}}/api/notification" }}
+        ]},
+        {"name": "Settings", "item": [
+          {"name": "Get", "request": {"method": "GET", "url": "{{baseUrl}}/api/settings" }},
+          {"name": "Update", "request": {"method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/settings", "body": {"mode":"raw","raw":"{\n  \"language\": \"ar\",\n  \"darkMode\": true,\n  \"notifications\": true\n}"}}}
+        ]},
+        {"name": "Summary", "item": [
+          {"name": "Get", "request": {"method": "GET", "url": "{{baseUrl}}/api/summary" }},
+          {"name": "Weekly", "request": {"method": "GET", "url": "{{baseUrl}}/api/summary/weekly" }}
+        ]},
+        {"name": "Earnings", "item": [
+          {"name": "Today", "request": {"method": "GET", "url": "{{baseUrl}}/api/earnings/today" }},
+          {"name": "Month", "request": {"method": "GET", "url": "{{baseUrl}}/api/earnings/month" }}
+        ]},
+        {"name": "Support", "item": [
+          {"name": "Create", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/support", "body": {"mode":"raw","raw":"{\n  \"message\": \"I need help...\"\n}"}}},
+          {"name": "List", "request": {"method": "GET", "url": "{{baseUrl}}/api/support" }}
+        ]},
+        {"name": "Ratings", "item": [
+          {"name": "List & Average", "request": {"method": "GET", "url": "{{baseUrl}}/api/rating" }}
+        ]},
+        {"name": "Chat", "item": [
+          {"name": "Get Messages by Trip", "request": {"method": "GET", "url": "{{baseUrl}}/api/chat/{{tripId}}" }},
+          {"name": "Post Message", "request": {"method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/chat", "body": {"mode":"raw","raw":"{\n  \"tripId\": \"{{tripId}}\",\n  \"senderId\": \"{{driverId}}\",\n  \"text\": \"Hello\"\n}"}}}
+        ]}
+      ]
+    }
+  ]
+}
+

@@ -1,0 +1,87 @@
+{
+  "info": {
+    "name": "MikroLink – All REST APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key": "baseUrl", "value": "http://localhost:5000"},
+    {"key": "driverToken", "value": ""},
+    {"key": "userToken", "value": ""},
+    {"key": "adminToken", "value": ""},
+    {"key": "driverId", "value": ""},
+    {"key": "userId", "value": ""},
+    {"key": "tripId", "value": ""},
+    {"key": "messageId", "value": ""}
+  ],
+  "item": [
+    {
+      "name": "Driver APIs",
+      "item": [
+        {"name": "Auth", "item": [
+          {"name":"Signup","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":"{{baseUrl}}/api/driver/signup","body":{"mode":"raw","raw":"{\n  \"fullName\":\"Driver One\",\n  \"phone\":\"0100000000\",\n  \"email\":\"driver@example.com\",\n  \"password\":\"pass1234\"\n}"}}},
+          {"name":"Login","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":"{{baseUrl}}/api/driver/login","body":{"mode":"raw","raw":"{\n  \"email\":\"driver@example.com\",\n  \"password\":\"pass1234\"\n}"}}}
+        ]},
+        {"name": "Profile", "item": [
+          {"name":"Get Profile","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{driverToken}}"}],"url":"{{baseUrl}}/api/profile/"}},
+          {"name":"Update Profile","request":{"method":"PUT","header":[{"key":"Authorization","value":"Bearer {{driverToken}}"},{"key":"Content-Type","value":"application/json"}],"url":"{{baseUrl}}/api/profile/","body":{"mode":"raw","raw":"{\n  \"fullName\":\"Updated Name\"\n}"}}}
+        ]},
+        {"name": "Vehicle", "item": [
+          {"name":"Get Vehicle","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{driverToken}}"}],"url":"{{baseUrl}}/api/vehicle/"}},
+          {"name":"Upsert Vehicle","request":{"method":"POST","header":[{"key":"Authorization","value":"Bearer {{driverToken}}"},{"key":"Content-Type","value":"application/json"}],"url":"{{baseUrl}}/api/vehicle/","body":{"mode":"raw","raw":"{\n  \"plateNumber\":\"ABC-123\",\n  \"model\":\"Sedan\"\n}"}}}
+        ]},
+        {"name": "Trip", "item": [
+          {"name":"List Trips","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{driverToken}}"}],"url":"{{baseUrl}}/api/trip/"}},
+          {"name":"Start Trip","request":{"method":"POST","header":[{"key":"Authorization","value":"Bearer {{driverToken}}"},{"key":"Content-Type","value":"application/json"}],"url":"{{baseUrl}}/api/trip/start","body":{"mode":"raw","raw":"{\n  \"passengerName\":\"User X\",\n  \"pickupLocation\":\"A\",\n  \"dropoffLocation\":\"B\"\n}"}}}
+        ]},
+        {"name": "Location", "item": [
+          {"name":"Live Update","request":{"method":"POST","header":[{"key":"Authorization","value":"Bearer {{driverToken}}"},{"key":"Content-Type","value":"application/json"}],"url":"{{baseUrl}}/api/location/live","body":{"mode":"raw","raw":"{\n  \"latitude\":30.0,\n  \"longitude\":31.0\n}"}}},
+          {"name":"Get Live","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{driverToken}}"}],"url":"{{baseUrl}}/api/location/live"}}
+        ]}
+      ]
+    },
+    {
+      "name": "User APIs",
+      "item": [
+        {"name":"Auth","item":[
+          {"name":"Signup","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":"{{baseUrl}}/api/user/signup","body":{"mode":"raw","raw":"{\n  \"fullName\":\"User One\",\n  \"phone\":\"0100\",\n  \"email\":\"user@example.com\",\n  \"password\":\"pass1234\"\n}"}}},
+          {"name":"Login","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":"{{baseUrl}}/api/user/login","body":{"mode":"raw","raw":"{\n  \"email\":\"user@example.com\",\n  \"password\":\"pass1234\"\n}"}}}
+        ]},
+        {"name":"Profile","item":[
+          {"name":"Get","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}],"url":"{{baseUrl}}/api/user/profile/"}},
+          {"name":"Update","request":{"method":"PUT","header":[{"key":"Authorization","value":"Bearer {{userToken}}"},{"key":"Content-Type","value":"application/json"}],"url":"{{baseUrl}}/api/user/profile/","body":{"mode":"raw","raw":"{\n  \"fullName\":\"User Updated\"\n}"}}}
+        ]},
+        {"name":"Trips","item":[
+          {"name":"Request Trip","request":{"method":"POST","header":[{"key":"Authorization","value":"Bearer {{userToken}}"},{"key":"Content-Type","value":"application/json"}],"url":"{{baseUrl}}/api/user/trip/request","body":{"mode":"raw","raw":"{\n  \"origin\":\"A\",\n  \"destination\":\"B\",\n  \"distance\":10,\n  \"price\":50\n}"}}},
+          {"name":"Rate Trip","request":{"method":"POST","header":[{"key":"Authorization","value":"Bearer {{userToken}}"},{"key":"Content-Type","value":"application/json"}],"url":"{{baseUrl}}/api/user/trip/{{tripId}}/rate","body":{"mode":"raw","raw":"{\n  \"rating\":5,\n  \"comment\":\"Great\"\n}"}}}
+        ]},
+        {"name":"Favorites","item":[
+          {"name":"List","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}],"url":"{{baseUrl}}/api/user/favorites/"}},
+          {"name":"Add","request":{"method":"POST","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}],"url":"{{baseUrl}}/api/user/favorites/{{driverId}}"}},
+          {"name":"Remove","request":{"method":"DELETE","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}],"url":"{{baseUrl}}/api/user/favorites/{{driverId}}"}}
+        ]},
+        {"name":"Notifications","item":[
+          {"name":"List","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}],"url":"{{baseUrl}}/api/user/notifications/"}},
+          {"name":"Mark Read","request":{"method":"PUT","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}],"url":"{{baseUrl}}/api/user/notifications/{{messageId}}/read"}}
+        ]},
+        {"name":"Wallet","item":[
+          {"name":"Get","request":{"method":"GET","header":[{"key":"Authorization","value":"Bearer {{userToken}}"}],"url":"{{baseUrl}}/api/user/wallet/"}},
+          {"name":"Add","request":{"method":"POST","header":[{"key":"Authorization","value":"Bearer {{userToken}}"},{"key":"Content-Type","value":"application/json"}],"url":"{{baseUrl}}/api/user/wallet/add","body":{"mode":"raw","raw":"{\n  \"amount\":100\n}"}}}
+        ]}
+      ]
+    },
+    {
+      "name": "Admin APIs (summary)",
+      "item": [
+        {"name":"Auth","item":[
+          {"name":"Login","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":"{{baseUrl}}/api/admin/auth/login","body":{"mode":"raw","raw":"{\n  \"email\":\"admin@example.com\",\n  \"password\":\"pass1234\"\n}"}}},
+          {"name":"Bootstrap Superadmin","request":{"method":"POST","header":[{"key":"x-admin-bootstrap","value":"changeme"},{"key":"Content-Type","value":"application/json"}],"url":"{{baseUrl}}/api/admin/auth/bootstrap","body":{"mode":"raw","raw":"{\n  \"fullName\":\"Super Admin\",\n  \"email\":\"super@example.com\",\n  \"password\":\"Pass#1234\"\n}"}}}
+        ]},
+        {"name":"Drivers","item":[
+          {"name":"Approve","request":{"method":"PUT","header":[{"key":"Authorization","value":"Bearer {{adminToken}}"}],"url":"{{baseUrl}}/api/admin/drivers/{{driverId}}/approve"}},
+          {"name":"Reject","request":{"method":"PUT","header":[{"key":"Authorization","value":"Bearer {{adminToken}}"}],"url":"{{baseUrl}}/api/admin/drivers/{{driverId}}/reject"}}
+        ]}
+      ]
+    }
+  ]
+}
+

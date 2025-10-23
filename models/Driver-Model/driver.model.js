@@ -6,6 +6,9 @@ const driverSchema = new mongoose.Schema({
   password: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   verified: { type: Boolean, default: false },
+  // Admin-level approval for documents/identity
+  documentsVerified: { type: Boolean, default: false },
+  isActive: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now },
   documents: {
     idFront: String,

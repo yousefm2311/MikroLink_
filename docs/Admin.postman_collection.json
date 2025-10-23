@@ -1,0 +1,117 @@
+{
+  "info": {"name": "MikroLink Admin API", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},
+  "item": [
+    {"name": "Auth", "item": [
+      {"name": "Bootstrap Superadmin (one-time)", "request": {"method": "POST", "url": "{{baseUrl}}/api/admin/auth/bootstrap", "body": {"mode": "raw", "raw": "{\n  \"fullName\": \"Super Admin\",\n  \"email\": \"super@mikrolink.com\",\n  \"password\": \"Pass#1234\"\n}"}, "header": [{"key":"x-admin-bootstrap","value":"{{bootstrapSecret}}"},{"key":"Content-Type","value":"application/json"}]}},
+      {"name": "Admin Login", "request": {"method": "POST", "url": "{{baseUrl}}/api/admin/auth/login", "body": {"mode": "raw", "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"pass1234\"\n}"}, "header": [{"key":"Content-Type","value":"application/json"}]}},
+      {"name": "Create Admin (superadmin)", "request": {"method": "POST", "url": "{{baseUrl}}/api/admin/auth/signup", "body": {"mode": "raw", "raw": "{\n  \"fullName\": \"Admin\",\n  \"email\": \"new@ex.com\",\n  \"password\": \"pass1234\",\n  \"role\": \"admin\"\n}"}, "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"},{"key":"Content-Type","value":"application/json"}]}},
+      {"name": "List Admins (superadmin)", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/auth/all", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Change Password", "request": {"method": "PUT", "url": "{{baseUrl}}/api/admin/auth/change-password", "body": {"mode": "raw", "raw": "{\n  \"currentPassword\": \"old\",\n  \"newPassword\": \"new#1234\"\n}"}, "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"},{"key":"Content-Type","value":"application/json"}]}},
+      {"name": "Logout", "request": {"method": "POST", "url": "{{baseUrl}}/api/admin/auth/logout", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}}
+    ]},
+    {"name": "Drivers", "item": [
+      {"name": "List Drivers", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/drivers", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Get Driver By ID", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/drivers/{{driverId}}", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Approve Driver", "request": {"method": "PUT", "url": "{{baseUrl}}/api/admin/drivers/{{driverId}}/approve", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Reject Driver", "request": {"method": "PUT", "url": "{{baseUrl}}/api/admin/drivers/{{driverId}}/reject", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Block / Unblock Driver", "request": {"method": "PUT", "url": "{{baseUrl}}/api/admin/drivers/{{driverId}}/block", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Delete Driver (superadmin)", "request": {"method": "DELETE", "url": "{{baseUrl}}/api/admin/drivers/{{driverId}}", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Get Driver Vehicle", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/drivers/{{driverId}}/vehicle", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Approve Driver Vehicle", "request": {"method": "PUT", "url": "{{baseUrl}}/api/admin/drivers/{{driverId}}/vehicle/approve", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Reject Driver Vehicle", "request": {"method": "PUT", "url": "{{baseUrl}}/api/admin/drivers/{{driverId}}/vehicle/reject", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}}
+    ]},
+    {"name": "Users", "item": [
+      {"name": "List Users", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/users", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Get User By ID", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/users/{{userId}}", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Block / Unblock User", "request": {"method": "PUT", "url": "{{baseUrl}}/api/admin/users/{{userId}}/block", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Delete User", "request": {"method": "DELETE", "url": "{{baseUrl}}/api/admin/users/{{userId}}", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Reset User Password", "request": {"method": "PUT", "url": "{{baseUrl}}/api/admin/users/{{userId}}/reset-password", "body": {"mode": "raw", "raw": "{\n  \"newPassword\": \"123456\"\n}"}, "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"},{"key":"Content-Type","value":"application/json"}]}}
+    ]},
+    {"name": "Trips", "item": [
+      {"name": "List Trips", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/trips", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Get Trip By ID", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/trips/{{tripId}}", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Cancel Trip", "request": {"method": "PUT", "url": "{{baseUrl}}/api/admin/trips/{{tripId}}/cancel", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Assign Driver", "request": {"method": "PUT", "url": "{{baseUrl}}/api/admin/trips/{{tripId}}/assign", "body": {"mode": "raw", "raw": "{\n  \"driverId\": \"{{driverId}}\"\n}"}, "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"},{"key":"Content-Type","value":"application/json"}]}},
+      {"name": "Filter Trips", "request": {"method": "POST", "url": "{{baseUrl}}/api/admin/trips/filter", "body": {"mode": "raw", "raw": "{\n  \"from\": \"2025-01-01\",\n  \"to\": \"2025-12-31\",\n  \"status\": \"completed\"\n}"}, "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"},{"key":"Content-Type","value":"application/json"}]}}
+    ]},
+    {"name": "Chat", "item": [
+      {"name": "All Chats", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/chat", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Trip Messages", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/chat/{{tripId}}", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Delete Message", "request": {"method": "DELETE", "url": "{{baseUrl}}/api/admin/chat/message/{{messageId}}", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}}
+    ]},
+    {"name": "Vehicles", "item": [
+      {"name": "List Vehicles", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/vehicles", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Get Vehicle By ID", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/vehicles/{{vehicleId}}", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Approve Vehicle", "request": {"method": "PUT", "url": "{{baseUrl}}/api/admin/vehicles/{{vehicleId}}/approve", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}}
+    ]},
+    {"name": "Earnings", "item": [
+      {"name": "Total Earnings", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/earnings", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Driver Earnings", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/earnings/{{driverId}}", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Filter Earnings", "request": {"method": "POST", "url": "{{baseUrl}}/api/admin/earnings/filter", "body": {"mode": "raw", "raw": "{\n  \"from\": \"2025-01-01\",\n  \"to\": \"2025-12-31\"\n}"}, "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"},{"key":"Content-Type","value":"application/json"}]}},
+      {"name": "Export CSV", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/earnings/export/csv", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}}
+    ]},
+    {"name": "Notifications", "item": [
+      {"name": "List Notifications", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/notifications", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Send Notification", "request": {"method": "POST", "url": "{{baseUrl}}/api/admin/notifications/send", "body": {"mode": "raw", "raw": "{\n  \"target\": \"all\",\n  \"title\": \"Hello\",\n  \"body\": \"World\"\n}"}, "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"},{"key":"Content-Type","value":"application/json"}]}},
+      {"name": "Delete Notification", "request": {"method": "DELETE", "url": "{{baseUrl}}/api/admin/notifications/{{notifId}}", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Update Notification", "request": {"method": "PUT", "url": "{{baseUrl}}/api/admin/notifications/{{notifId}}", "body": {"mode": "raw", "raw": "{\n  \"title\": \"Updated\"\n}"}, "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"},{"key":"Content-Type","value":"application/json"}]}}
+    ]},
+    {"name": "Settings", "item": [
+      {"name": "Get Settings", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/settings", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Update Settings", "request": {"method": "PUT", "url": "{{baseUrl}}/api/admin/settings", "body": {"mode": "raw", "raw": "{\n  \"commission\": 0.15,\n  \"workHours\": \"24/7\"\n}"}, "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"},{"key":"Content-Type","value":"application/json"}]}},
+      {"name": "Update Zones", "request": {"method": "PUT", "url": "{{baseUrl}}/api/admin/settings/zones", "body": {"mode": "raw", "raw": "{\n  \"zones\": [{\n    \"name\": \"Zone A\", \"bounds\": []\n  }]\n}"}, "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"},{"key":"Content-Type","value":"application/json"}]}}
+    ]},
+    {"name": "Live", "item": [
+      {"name": "Live Drivers", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/live/drivers", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Active Trips", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/live/trips", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Driver Status", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/live/driver/{{driverId}}", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}}
+    ]},
+    {"name": "Reports", "item": [
+      {"name": "Dashboard", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/reports/dashboard", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Daily", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/reports/daily", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Monthly", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/reports/monthly", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Export CSV", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/reports/export", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}}
+    ]},
+    {"name": "Support", "item": [
+      {"name": "Tickets", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/support", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Ticket By ID", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/support/{{ticketId}}", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}}
+    ]},
+    {"name": "Verify", "item": [
+      {"name": "Pending Verifications", "request": {"method": "GET", "url": "{{baseUrl}}/api/admin/verify/pending", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Approve Driver Documents", "request": {"method": "PUT", "url": "{{baseUrl}}/api/admin/verify/{{driverId}}/approve", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}},
+      {"name": "Reject Driver Documents", "request": {"method": "PUT", "url": "{{baseUrl}}/api/admin/verify/{{driverId}}/reject", "header": [{"key":"Authorization","value":"Bearer {{adminToken}}"}]}}
+    ]}
+  ],
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "try {",
+          "  const url = pm.request.url.toString();",
+          "  const json = pm.response.json();",
+          "  const data = json && (json.data || {});",
+          "  const access = data.accessToken || json.accessToken;",
+          "  if (url.includes('/api/admin/auth/login') && access) {",
+          "    pm.collectionVariables.set('adminToken', access);",
+          "    pm.test('Saved adminToken', function () { pm.expect(access).to.be.a('string'); });",
+          "  }",
+          "} catch(e) { /* ignore */ }"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {"key":"baseUrl","value":"http://localhost:5000"},
+    {"key":"adminToken","value":""},
+    {"key":"bootstrapSecret","value":"changeme"},
+    {"key":"driverId","value":""},
+    {"key":"vehicleId","value":""},
+    {"key":"userId","value":""},
+    {"key":"tripId","value":""},
+    {"key":"messageId","value":""},
+    {"key":"notifId","value":""},
+    {"key":"ticketId","value":""}
+  ]
+}

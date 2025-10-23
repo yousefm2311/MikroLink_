@@ -16,7 +16,6 @@ export function initSocket(server) {
   ioInstance = io;
 
   io.on("connection", (socket) => {
-    // Join a trip room to receive focused updates
     socket.on("join:trip", ({ tripId }) => {
       if (!tripId) return;
       socket.join(`trip:${tripId}`);
